@@ -101,7 +101,11 @@ dist
 
 # Gatsby files
 .cache/
-public
+
+# Video files (too large for GitHub)
+assets/video_library/
+public/video_library/
+public/audio/
 
 # Storybook build outputs
 .out
