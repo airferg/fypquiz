@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 import { Brain, Sparkles, Users, BookOpen, Trophy, LogOut, GraduationCap } from 'lucide-react'
 
 export default function DashboardPage() {
-  const { user, loading, signOut, studentInfo } = useAuth()
+  const { user, loading, signOut } = useAuth()
   const router = useRouter()
   
   const [isProcessing, setIsProcessing] = useState(false)
@@ -109,12 +109,6 @@ export default function DashboardPage() {
             <h1 className="text-3xl font-bold text-white">fypquiz</h1>
             <div className="flex items-center space-x-2 mt-1">
               <p className="text-gray-300">Welcome back, {user.email}!</p>
-              {studentInfo?.isVerifiedStudent && studentInfo.institutionName && (
-                <div className="flex items-center space-x-1 text-sm text-accent">
-                  <GraduationCap className="h-4 w-4" />
-                  <span>{studentInfo.institutionName}</span>
-                </div>
-              )}
             </div>
           </div>
           <div className="flex items-center space-x-4">

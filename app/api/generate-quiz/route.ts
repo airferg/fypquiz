@@ -41,6 +41,7 @@ export async function POST(request: NextRequest) {
     console.log('Content length:', content.length)
     console.log('Readability ratio:', readabilityRatio.toFixed(2))
     console.log('Content preview:', content.substring(0, 500) + '...')
+    console.log('Requested question count:', validatedQuestionCount)
 
     // If content is mostly unreadable, provide a helpful error
     if (readabilityRatio < 0.3) {
@@ -60,12 +61,12 @@ export async function POST(request: NextRequest) {
           role: "system",
           content: `You are a professional quiz generator that creates challenging educational content with engaging voice commentary.
 
-CRITICAL: You MUST generate questions that are DIRECTLY about the specific content provided. Do NOT create generic questions about uploading files or general topics.
+CRITICAL: You MUST generate EXACTLY ${validatedQuestionCount} questions that are DIRECTLY about the specific content provided. Do NOT create generic questions about uploading files or general topics.
 
 Your task:
 1. Read and analyze the provided content carefully
 2. Identify specific facts, concepts, definitions, and details from the content
-3. Create ${validatedQuestionCount} multiple choice questions that test understanding of the ACTUAL content provided
+3. Create EXACTLY ${validatedQuestionCount} multiple choice questions that test understanding of the ACTUAL content provided
 4. Each question should have 4 choices (A, B, C, D) with one correct answer
 5. Include engaging, educational commentary in the voiceScript field that introduces the question or provides context
 
@@ -86,6 +87,8 @@ EXAMPLE: If the content mentions "Market risk is a primary concern for stock inv
 Choices: ["Market risk", "Interest rate risk", "Liquidity risk", "Credit risk"]
 Correct: 0
 
+IMPORTANT: You MUST return EXACTLY ${validatedQuestionCount} questions, no more, no less.
+
 Return the response as a JSON object with this exact structure:
 {
   "title": "Quiz title based on the actual content",
@@ -97,24 +100,15 @@ Return the response as a JSON object with this exact structure:
       "voiceScript": "Engaging commentary that introduces the question or provides educational context"
     }
   ]
-}
-
-Rules:
-- Questions MUST be about specific facts, concepts, or details from the provided content
-- Do NOT ask generic questions like "What is the main topic?" or "How much content was uploaded?"
-- Do NOT reference "the content", "material", or "text" in the question text
-- Focus on specific terms, definitions, concepts, and facts mentioned in the content
-- Make the voiceScript educational and engaging, suitable for AI voice generation
-- Ensure the correct answer is actually correct based on the content provided
-- ALL answer choices must be realistic and plausible - no joke answers`
+}`
         },
         {
           role: "user",
-          content: `Generate a quiz based on this content: ${content}`
+          content: `Generate EXACTLY ${validatedQuestionCount} quiz questions based on this content: ${content}`
         }
       ],
       temperature: 0.7,
-      max_tokens: Math.max(3000, validatedQuestionCount * 200), // Increase tokens for more questions
+      max_tokens: Math.max(4000, validatedQuestionCount * 250), // Increase tokens for more questions
     })
 
     const responseText = completion.choices[0]?.message?.content
@@ -151,6 +145,64 @@ Rules:
         throw new Error('Invalid quiz structure')
       }
       
+      // Check if we got the exact number of questions requested
+      if (quizData.questions.length !== validatedQuestionCount) {
+        console.warn(`Warning: Got ${quizData.questions.length} questions but requested ${validatedQuestionCount}`)
+        
+        // If we got fewer questions, try to generate more
+        if (quizData.questions.length < validatedQuestionCount) {
+          const missingCount = validatedQuestionCount - quizData.questions.length
+          console.log(`Attempting to generate ${missingCount} more questions...`)
+          
+          // Try to generate additional questions
+          const additionalCompletion = await openai.chat.completions.create({
+            model: "gpt-4o",
+            messages: [
+              {
+                role: "system",
+                content: `Generate EXACTLY ${missingCount} additional quiz questions based on the same content. Make sure they are different from the existing questions.`
+              },
+              {
+                role: "user",
+                content: `Generate ${missingCount} more questions based on this content: ${content}`
+              }
+            ],
+            temperature: 0.7,
+            max_tokens: missingCount * 250,
+          })
+          
+          const additionalResponse = additionalCompletion.choices[0]?.message?.content
+          if (additionalResponse) {
+            let additionalCleaned = additionalResponse.trim()
+            if (additionalCleaned.startsWith('```json')) {
+              additionalCleaned = additionalCleaned.replace(/^```json\s*/, '')
+            }
+            if (additionalCleaned.startsWith('```')) {
+              additionalCleaned = additionalCleaned.replace(/^```\s*/, '')
+            }
+            if (additionalCleaned.endsWith('```')) {
+              additionalCleaned = additionalCleaned.replace(/\s*```$/, '')
+            }
+            
+            try {
+              const additionalData = JSON.parse(additionalCleaned)
+              if (additionalData.questions && Array.isArray(additionalData.questions)) {
+                quizData.questions = [...quizData.questions, ...additionalData.questions]
+                console.log(`Added ${additionalData.questions.length} additional questions`)
+              }
+            } catch (additionalError) {
+              console.error('Failed to parse additional questions:', additionalError)
+            }
+          }
+        }
+        
+        // If we still don't have enough questions, truncate to the requested number
+        if (quizData.questions.length > validatedQuestionCount) {
+          quizData.questions = quizData.questions.slice(0, validatedQuestionCount)
+          console.log(`Truncated to ${validatedQuestionCount} questions`)
+        }
+      }
+      
       // Randomize the position of correct answers
       quizData.questions = quizData.questions.map((question: any) => {
         const { choices, correctIndex, ...rest } = question
@@ -180,7 +232,7 @@ Rules:
       
       console.log('Successfully parsed OpenAI response!')
       console.log('Quiz title:', quizData.title)
-      console.log('Number of questions:', quizData.questions.length)
+      console.log('Final number of questions:', quizData.questions.length)
       console.log('First question:', quizData.questions[0]?.question)
       
       // Log all questions to verify they're content-specific

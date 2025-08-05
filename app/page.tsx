@@ -59,17 +59,13 @@ export default function LandingPage() {
           <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
             Transform your boring study materials into retention-focused quiz experiences with AI-generated commentary
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex justify-center">
             <button 
               onClick={handleGetStarted}
               className="bg-accent text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-accent/90 transition-all flex items-center justify-center space-x-2"
             >
               <Play className="h-5 w-5" />
               <span>Start Learning</span>
-            </button>
-            <button className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-white/20 transition-all flex items-center justify-center space-x-2">
-              <Zap className="h-5 w-5" />
-              <span>Watch Demo</span>
             </button>
           </div>
         </div>

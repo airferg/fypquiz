@@ -386,14 +386,14 @@ export default function QuizPage() {
               </button>
               <button
                 onClick={() => {
-                  // Clear session storage when going back to home
+                  // Clear session storage when going back to dashboard
                   sessionStorage.removeItem('savedAudioFiles')
-                  router.push('/')
+                  router.push('/dashboard')
                 }}
                 className="w-full bg-white/10 backdrop-blur-md border border-white/20 text-white py-2 px-4 rounded-lg font-semibold hover:bg-white/20 transition-all"
               >
                 <Home className="h-4 w-4 inline mr-2" />
-                Back to Home
+                Back to Dashboard
               </button>
             </div>
           </div>
@@ -408,11 +408,11 @@ export default function QuizPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <button
-            onClick={() => {
-              // Clear session storage when going back to home
-              sessionStorage.removeItem('savedAudioFiles')
-              router.push('/')
-            }}
+                            onClick={() => {
+                  // Clear session storage when going back to dashboard
+                  sessionStorage.removeItem('savedAudioFiles')
+                  router.push('/dashboard')
+                }}
             className="flex items-center space-x-2 text-gray-300 hover:text-white"
           >
             <ArrowLeft className="h-5 w-5" />

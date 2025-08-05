@@ -155,6 +155,13 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    if (!data || data.length === 0) {
+      return NextResponse.json(
+        { error: 'Failed to save study set - no data returned' },
+        { status: 500 }
+      )
+    }
+
     return NextResponse.json({ 
       success: true, 
       studySet: data[0] 

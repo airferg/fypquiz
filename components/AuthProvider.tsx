@@ -3,23 +3,14 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { User } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase'
-import { validateStudentEmail, validateStudentForAuth, isLikelyAcademicEmail } from '@/lib/studentValidation'
-
-interface StudentInfo {
-  isVerifiedStudent: boolean;
-  institutionName?: string;
-  validationError?: string;
-}
 
 interface AuthContextType {
   user: User | null
   loading: boolean
-  studentInfo: StudentInfo | null
   signIn: (email: string, password: string) => Promise<void>
   signUp: (email: string, password: string) => Promise<void>
   signInWithGoogle: () => Promise<void>
   signOut: () => Promise<void>
-  validateStudentEmail: (email: string) => Promise<StudentInfo>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -28,7 +19,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [initialized, setInitialized] = useState(false)
-  const [studentInfo, setStudentInfo] = useState<StudentInfo | null>(null)
 
   useEffect(() => {
     let mounted = true
@@ -74,10 +64,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         setUser(session?.user ?? null)
         
-        // Validate student email if user exists
-        if (session?.user?.email) {
-          await validateStudentEmailForUser(session.user.email)
-        }
+
       } catch (error) {
         console.error('AuthProvider: Exception getting session:', error)
         // Continue without session if there's an error
@@ -99,12 +86,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.log('AuthProvider: Auth state changed:', event, session ? 'User logged in' : 'No session')
         setUser(session?.user ?? null)
         
-        // Validate student email when user signs in
-        if (session?.user?.email && event === 'SIGNED_IN') {
-          await validateStudentEmailForUser(session.user.email)
-        } else if (event === 'SIGNED_OUT') {
-          setStudentInfo(null)
-        }
+
         
         setLoading(false)
         setInitialized(true)
@@ -116,40 +98,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       subscription.unsubscribe()
     }
   }, [])
-
-  const validateStudentEmailForUser = async (email: string) => {
-    try {
-      const result = await validateStudentEmail(email)
-      setStudentInfo({
-        isVerifiedStudent: result.isValidStudent,
-        institutionName: result.institutionName,
-        validationError: result.error
-      })
-    } catch (error) {
-      console.error('Error validating student email:', error)
-      setStudentInfo({
-        isVerifiedStudent: false,
-        validationError: 'Unable to verify student status'
-      })
-    }
-  }
-
-  const validateStudentEmail = async (email: string): Promise<StudentInfo> => {
-    try {
-      const result = await validateStudentEmail(email)
-      return {
-        isVerifiedStudent: result.isValidStudent,
-        institutionName: result.institutionName,
-        validationError: result.error
-      }
-    } catch (error) {
-      console.error('Error validating student email:', error)
-      return {
-        isVerifiedStudent: false,
-        validationError: 'Unable to verify student status'
-      }
-    }
-  }
 
   const signIn = async (email: string, password: string) => {
     if (!supabase) {
@@ -241,15 +189,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, studentInfo, signIn, signUp, signInWithGoogle, signOut, validateStudentEmail }}>
-                     {initialized ? children : (
-                 <div className="min-h-screen bg-black flex items-center justify-center">
-                   <div className="text-center">
-                     <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-accent mx-auto mb-4"></div>
-                     <p className="text-lg text-gray-300">Initializing...</p>
-                   </div>
-                 </div>
-               )}
+    <AuthContext.Provider value={{ user, loading, signIn, signUp, signInWithGoogle, signOut }}>
+      {initialized ? children : (
+        <div className="min-h-screen bg-black flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-accent mx-auto mb-4"></div>
+            <p className="text-lg text-gray-300">Initializing...</p>
+          </div>
+        </div>
+      )}
     </AuthContext.Provider>
   )
 }
