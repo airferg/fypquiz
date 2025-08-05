@@ -95,8 +95,8 @@ export default function QuizPlayer({ questions, backgroundVideo, selectedVoice, 
           const question = questions[i];
           console.log(`🎤 Generating audio for question ${i + 1}/${questions.length}`);
           
-          // Create question text
-          const questionText = `Question ${i + 1}: ${question.question}`;
+          // Create question text - just the question, not "Question X:"
+          const questionText = question.question;
           
           // Generate question audio
           const questionResponse = await fetch('/api/generate-voice', {
