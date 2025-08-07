@@ -8,11 +8,15 @@ const SCHEDULE_CONFIG = {
   preferredTime: '10:00', // Time to publish (24-hour format)
 }
 
+function getWeekdayLowercase(date: Date): string {
+  return date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase()
+}
+
 export async function POST() {
   try {
     // Check if we need to generate a post today
     const today = new Date()
-    const dayOfWeek = today.toLocaleDateString('en-US', { weekday: 'lowercase' })
+    const dayOfWeek = getWeekdayLowercase(today)
     const currentTime = today.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })
     
     // Check if today is a preferred day and time
@@ -77,17 +81,29 @@ export async function POST() {
 
 function getNextPublishTime(): string {
   const today = new Date()
-  const currentDay = today.toLocaleDateString('en-US', { weekday: 'lowercase' })
+  const currentDay = getWeekdayLowercase(today)
   
-  // Find next preferred day
-  let nextDay = SCHEDULE_CONFIG.preferredDays.find(day => day > currentDay)
-  if (!nextDay) {
-    nextDay = SCHEDULE_CONFIG.preferredDays[0] // Next week
+  // Find next preferred day by order in preferredDays
+  const currentIndex = SCHEDULE_CONFIG.preferredDays.indexOf(currentDay)
+  const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % SCHEDULE_CONFIG.preferredDays.length
+  
+  // Compute next date that matches nextIndex day name
+  const dayNameToIndex: Record<string, number> = {
+    sunday: 0,
+    monday: 1,
+    tuesday: 2,
+    wednesday: 3,
+    thursday: 4,
+    friday: 5,
+    saturday: 6,
   }
   
-  // Calculate days until next publish
-  const daysUntilNext = SCHEDULE_CONFIG.preferredDays.indexOf(nextDay) - SCHEDULE_CONFIG.preferredDays.indexOf(currentDay)
-  const nextDate = new Date(today.getTime() + (daysUntilNext > 0 ? daysUntilNext : 7 + daysUntilNext) * 24 * 60 * 60 * 1000)
+  const targetDayName = SCHEDULE_CONFIG.preferredDays[nextIndex]
+  const targetDow = dayNameToIndex[targetDayName]
+  
+  const daysAhead = (targetDow - today.getDay() + 7) % 7 || 7
+  const nextDate = new Date(today)
+  nextDate.setDate(today.getDate() + daysAhead)
   
   return `${nextDate.toLocaleDateString()} at ${SCHEDULE_CONFIG.preferredTime}`
 }
@@ -96,7 +112,7 @@ function getNextPublishTime(): string {
 export async function GET() {
   try {
     const today = new Date()
-    const dayOfWeek = today.toLocaleDateString('en-US', { weekday: 'lowercase' })
+    const dayOfWeek = getWeekdayLowercase(today)
     const currentTime = today.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })
     
     const shouldPublish = SCHEDULE_CONFIG.preferredDays.includes(dayOfWeek) && 
