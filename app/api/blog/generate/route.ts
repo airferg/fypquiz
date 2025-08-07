@@ -2,10 +2,6 @@ import { NextResponse } from 'next/server'
 import OpenAI from 'openai'
 import { supabase } from '@/lib/supabase'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
-
 // Blog post templates with target keywords
 const blogTemplates = [
   {
@@ -92,6 +88,13 @@ function calculateReadTime(content: string): number {
 
 export async function POST() {
   try {
+    const apiKey = process.env.OPENAI_API_KEY
+    if (!apiKey) {
+      console.error('OPENAI_API_KEY is missing')
+      return NextResponse.json({ error: 'OPENAI_API_KEY is not configured' }, { status: 500 })
+    }
+    const openai = new OpenAI({ apiKey })
+
     // Select a random template
     const template = blogTemplates[Math.floor(Math.random() * blogTemplates.length)]
     
