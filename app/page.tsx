@@ -1,10 +1,12 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { Brain, Sparkles, Users, BookOpen, Trophy, ArrowRight, Play, Zap, Target, Award } from 'lucide-react'
+import { useState } from 'react'
+import { Brain, Sparkles, Users, BookOpen, Trophy, ArrowRight, Play, Zap, Target, Award, Menu, X } from 'lucide-react'
 
 export default function LandingPage() {
   const router = useRouter()
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const handleGetStarted = () => {
     router.push('/auth')
@@ -13,23 +15,69 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Navigation */}
-      <nav className="absolute top-0 left-0 right-0 z-20 flex justify-between items-center p-6 max-w-7xl mx-auto">
-        <div className="flex items-center space-x-2">
-          <Brain className="h-8 w-8 text-accent" />
-          <span className="text-2xl font-bold">fypquiz</span>
-        </div>
-        <div className="flex items-center space-x-6">
-          <a href="#features" className="hover:text-accent transition-colors">Features</a>
-          <a href="#how-it-works" className="hover:text-accent transition-colors">How it Works</a>
-          <a href="/blog" className="hover:text-accent transition-colors">Blog</a>
-          <a 
-            href="/auth"
-            className="bg-accent text-white px-6 py-2 rounded-lg hover:bg-accent/90 transition-all flex items-center space-x-2"
+      <nav className="absolute top-0 left-0 right-0 z-30 p-4 md:p-6 max-w-7xl mx-auto">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center space-x-2">
+            <Brain className="h-8 w-8 text-accent" />
+            <span className="text-2xl font-bold">fypquiz</span>
+          </div>
+
+          {/* Desktop links */}
+          <div className="hidden md:flex items-center space-x-6">
+            <a href="#features" className="hover:text-accent transition-colors">Features</a>
+            <a href="#how-it-works" className="hover:text-accent transition-colors">How it Works</a>
+            <a href="/blog" className="hover:text-accent transition-colors">Blog</a>
+            <a
+              href="/auth"
+              className="bg-accent text-white px-6 py-2 rounded-lg hover:bg-accent/90 transition-all flex items-center space-x-2"
+            >
+              <span>Get Started</span>
+              <ArrowRight className="h-4 w-4" />
+            </a>
+          </div>
+
+          {/* Mobile hamburger */}
+          <button
+            className="md:hidden inline-flex items-center justify-center p-2 rounded-md bg-white/10 hover:bg-white/20"
+            aria-label="Open menu"
+            onClick={() => setIsMenuOpen(true)}
           >
-            <span>Get Started</span>
-            <ArrowRight className="h-4 w-4" />
-          </a>
+            <Menu className="h-6 w-6" />
+          </button>
         </div>
+
+        {/* Mobile drawer */}
+        {isMenuOpen && (
+          <div className="fixed inset-0 z-40 md:hidden">
+            <div className="absolute inset-0 bg-black/60" onClick={() => setIsMenuOpen(false)} />
+            <div className="absolute top-0 left-0 h-full w-72 bg-zinc-900 border-r border-white/10 shadow-xl p-6 flex flex-col">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center space-x-2">
+                  <Brain className="h-7 w-7 text-accent" />
+                  <span className="text-xl font-bold">fypquiz</span>
+                </div>
+                <button
+                  className="inline-flex items-center justify-center p-2 rounded-md bg-white/10 hover:bg-white/20"
+                  aria-label="Close menu"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              <a href="#features" className="py-3 border-b border-white/10" onClick={() => setIsMenuOpen(false)}>Features</a>
+              <a href="#how-it-works" className="py-3 border-b border-white/10" onClick={() => setIsMenuOpen(false)}>How it Works</a>
+              <a href="/blog" className="py-3 border-b border-white/10" onClick={() => setIsMenuOpen(false)}>Blog</a>
+              <a
+                href="/auth"
+                className="mt-6 bg-accent text-white px-4 py-3 rounded-lg text-center"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Get Started
+              </a>
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* Hero Section with Video Background */}
@@ -51,19 +99,19 @@ export default function LandingPage() {
         
         {/* Hero Content */}
         <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
-          <h1 className="text-6xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-accent to-purple-400 bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 bg-gradient-to-r from-accent to-purple-400 bg-clip-text text-transparent">
             <span className="text-white">The
             </span> ADHD Study Solution 
             <br />
             <span className="text-white">For College Students</span>
           </h1>
-          <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
+          <p className="text-lg md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
             Transform your boring study materials into retention-focused quiz experiences with AI-generated commentary
           </p>
           <div className="flex justify-center">
             <button 
               onClick={handleGetStarted}
-              className="bg-accent text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-accent/90 transition-all flex items-center justify-center space-x-2"
+              className="bg-accent text-white px-6 md:px-8 py-3 md:py-4 rounded-lg text-base md:text-lg font-semibold hover:bg-accent/90 transition-all flex items-center justify-center space-x-2"
             >
               <Play className="h-5 w-5" />
               <span>Start Learning</span>

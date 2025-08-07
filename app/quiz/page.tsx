@@ -534,24 +534,50 @@ export default function QuizPage() {
               <label className="text-lg font-medium text-white">
                 How many questions do you want?
               </label>
-              <input
-                type="number"
-                min="5"
-                max="50"
-                value={questionCount}
-                onChange={(e) => {
-                  const value = parseInt(e.target.value)
-                  if (value >= 5 && value <= 50) {
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    const value = Math.max(5, questionCount - 1)
                     setQuestionCount(value)
                     sessionStorage.setItem('questionCount', value.toString())
-                  }
-                }}
-                className="w-20 px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-center text-lg font-semibold text-white focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
-                placeholder="10"
-              />
+                  }}
+                  className="h-10 w-10 rounded-lg bg-white/10 border border-white/20 text-white text-xl flex items-center justify-center active:scale-95"
+                  aria-label="Decrease questions"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  min="5"
+                  max="50"
+                  value={questionCount}
+                  onChange={(e) => {
+                    const raw = e.target.value
+                    const parsed = parseInt(raw || '0', 10)
+                    const clamped = isNaN(parsed) ? 5 : Math.min(50, Math.max(5, parsed))
+                    setQuestionCount(clamped)
+                    sessionStorage.setItem('questionCount', clamped.toString())
+                  }}
+                  className="w-24 px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-center text-lg font-semibold text-white focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+                  placeholder="10"
+                />
+                <button
+                  onClick={() => {
+                    const value = Math.min(50, questionCount + 1)
+                    setQuestionCount(value)
+                    sessionStorage.setItem('questionCount', value.toString())
+                  }}
+                  className="h-10 w-10 rounded-lg bg-white/10 border border-white/20 text-white text-xl flex items-center justify-center active:scale-95"
+                  aria-label="Increase questions"
+                >
+                  +
+                </button>
+              </div>
             </div>
             <div className="text-sm text-gray-300 mt-2">
-              <span>Enter a number between 5 and 50</span>
+              <span>Choose 5–50 questions</span>
             </div>
           </div>
         </div>
