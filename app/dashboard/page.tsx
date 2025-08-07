@@ -5,8 +5,7 @@ import { useAuth } from '@/components/AuthProvider'
 import FileUploader from '@/components/FileUploader'
 import { useRouter } from 'next/navigation'
 import { BookOpen, Trophy, LogOut, GraduationCap } from 'lucide-react'
-import { NextSeo } from 'next-seo'
-import { pageSEO } from '@/lib/seo'
+
 
 export default function DashboardPage() {
   const { user, loading, signOut } = useAuth()
@@ -114,18 +113,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <>
-      <NextSeo
-        title={pageSEO.dashboard.title}
-        description={pageSEO.dashboard.description}
-        additionalMetaTags={[
-          {
-            name: 'keywords',
-            content: pageSEO.dashboard.keywords,
-          },
-        ]}
-      />
-      <div className="min-h-screen bg-black p-4">
+    <div className="min-h-screen bg-black p-4">
       {/* Header */}
       <header className="max-w-6xl mx-auto mb-8">
         <div className="flex justify-between items-center">
@@ -192,6 +180,5 @@ export default function DashboardPage() {
         )}
       </div>
     </div>
-    </>
   )
 } 

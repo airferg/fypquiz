@@ -6,8 +6,7 @@ import { useAuth } from '@/components/AuthProvider'
 import QuizPlayer from '@/components/QuizPlayer'
 import { ArrowLeft, Trophy, Home } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
-import { NextSeo } from 'next-seo'
-import { pageSEO } from '@/lib/seo'
+
 
 // Disable SSR for this page
 export const dynamic = 'force-dynamic'
@@ -439,18 +438,7 @@ export default function QuizPage() {
   }
 
   return (
-    <>
-      <NextSeo
-        title={pageSEO.quiz.title}
-        description={pageSEO.quiz.description}
-        additionalMetaTags={[
-          {
-            name: 'keywords',
-            content: pageSEO.quiz.keywords,
-          },
-        ]}
-      />
-      <div className="min-h-screen bg-black p-4">
+    <div className="min-h-screen bg-black p-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -622,6 +610,5 @@ export default function QuizPage() {
         </div>
       </div>
     </div>
-    </>
   )
 } 

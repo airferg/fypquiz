@@ -3,8 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Check } from 'lucide-react'
-import { NextSeo } from 'next-seo'
-import { pageSEO } from '@/lib/seo'
+
 
 // Disable SSR for this page
 export const dynamic = 'force-dynamic'
@@ -44,18 +43,7 @@ export default function VideosPage() {
   }
 
   return (
-    <>
-      <NextSeo
-        title={pageSEO.videos.title}
-        description={pageSEO.videos.description}
-        additionalMetaTags={[
-          {
-            name: 'keywords',
-            content: pageSEO.videos.keywords,
-          },
-        ]}
-      />
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50">
       <div className="max-w-md mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-4">
@@ -119,6 +107,5 @@ export default function VideosPage() {
         </div>
       </div>
     </div>
-    </>
   )
 }
