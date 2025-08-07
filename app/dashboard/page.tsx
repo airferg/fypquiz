@@ -128,6 +128,13 @@ export default function DashboardPage() {
           </div>
           <div className="flex items-center space-x-4">
             <button
+              onClick={() => router.push('/blog')}
+              className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-4 py-2 rounded-lg hover:bg-white/20 transition-all flex items-center space-x-2"
+            >
+              <BookOpen className="h-4 w-4" />
+              <span>Blog</span>
+            </button>
+            <button
               onClick={() => router.push('/collection')}
               className="bg-accent text-white px-4 py-2 rounded-lg hover:bg-accent/90 transition-all flex items-center space-x-2"
             >
