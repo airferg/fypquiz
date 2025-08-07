@@ -94,7 +94,7 @@ export default function QuizPlayer({ questions, backgroundVideo, selectedVoice, 
         }, wordInterval * 1000)
         
         // Store timer reference for cleanup
-        audio.wordTimer = wordTimer
+        ;(audio as any).wordTimer = wordTimer
       })
       
       audio.addEventListener('timeupdate', () => {
@@ -144,8 +144,8 @@ export default function QuizPlayer({ questions, backgroundVideo, selectedVoice, 
   const stopCurrentAudio = () => {
     if (currentAudio) {
       // Clear word timer if it exists
-      if (currentAudio.wordTimer) {
-        clearInterval(currentAudio.wordTimer)
+      if ((currentAudio as any).wordTimer) {
+        clearInterval((currentAudio as any).wordTimer)
       }
       currentAudio.pause()
       currentAudio.currentTime = 0
