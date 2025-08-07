@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
       const transcriptionResponse = await Promise.race([
         transcriptionPromise,
         createTimeout(300000) // 5 minutes timeout
-      ])
+      ]) as Response
 
       if (!transcriptionResponse.ok) {
         const errorText = await transcriptionResponse.text()
