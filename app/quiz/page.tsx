@@ -24,22 +24,21 @@ interface QuizData {
 
 const videoOptions = [
   // Minecraft videos
-  { id: 'minecraft_video1', label: 'Minecraft_video1', name: 'Minecraft Parkour 1', category: 'Minecraft', src: '/video_library/Minecraft_Parkour/Minecraft_video1.mp4' },
-  { id: 'minecraft_video2', label: 'Minecraft_video2', name: 'Minecraft Parkour 2', category: 'Minecraft', src: '/video_library/Minecraft_Parkour/Minecraft_video2.mp4' },
-  { id: 'minecraft_video3', label: 'Minecraft_video3', name: 'Minecraft Parkour 3', category: 'Minecraft', src: '/video_library/Minecraft_Parkour/Minecraft_video3.mp4' },
-  { id: 'minecraft_video4', label: 'Minecraft_video4', name: 'Minecraft Parkour 4', category: 'Minecraft', src: '/video_library/Minecraft_Parkour/Minecraft_video4.mp4' },
-  { id: 'minecraft_video5', label: 'Minecraft_video5', name: 'Minecraft Parkour 5', category: 'Minecraft', src: '/video_library/Minecraft_Parkour/Minecraft_video5.mp4' },
-  { id: 'minecraft_video6', label: 'Minecraft_video6', name: 'Minecraft Parkour 6', category: 'Minecraft', src: '/video_library/Minecraft_Parkour/Minecraft_video6.mp4' },
-  { id: 'minecraft_video7', label: 'Minecraft_video7', name: 'Minecraft Parkour 7', category: 'Minecraft', src: '/video_library/Minecraft_Parkour/Minecraft_video7.mp4' },
+  { id: 'minecraft_video1', label: 'Minecraft_video1', name: 'Minecraft Parkour 1', category: 'Minecraft', src: '/videos/Minecraft_video1.mp4' },
+  { id: 'minecraft_video2', label: 'Minecraft_video2', name: 'Minecraft Parkour 2', category: 'Minecraft', src: '/videos/Minecraft_video2.mp4' },
+  { id: 'minecraft_video3', label: 'Minecraft_video3', name: 'Minecraft Parkour 3', category: 'Minecraft', src: '/videos/Minecraft_video3.mp4' },
+  { id: 'minecraft_video4', label: 'Minecraft_video4', name: 'Minecraft Parkour 4', category: 'Minecraft', src: '/videos/Minecraft_video4.mp4' },
+  { id: 'minecraft_video5', label: 'Minecraft_video5', name: 'Minecraft Parkour 5', category: 'Minecraft', src: '/videos/Minecraft_video5.mp4' },
+  { id: 'minecraft_video6', label: 'Minecraft_video6', name: 'Minecraft Parkour 6', category: 'Minecraft', src: '/videos/Minecraft_video6.mp4' },
   
   // Spiderman videos
-  { id: 'spiderman_video1', label: 'Spiderman_video1', name: 'Spider-Man 1', category: 'Spider-Man', src: '/video_library/spiderman_videos/Spiderman_video1.mp4' },
-  { id: 'spiderman_video2', label: 'Spiderman_video2', name: 'Spider-Man 2', category: 'Spider-Man', src: '/video_library/spiderman_videos/Spiderman_video2.mp4' },
-  { id: 'spiderman_video3', label: 'Spiderman_video3', name: 'Spider-Man 3', category: 'Spider-Man', src: '/video_library/spiderman_videos/Spiderman_video3.mp4' },
-  { id: 'spiderman_video4', label: 'Spiderman_video4', name: 'Spider-Man 4', category: 'Spider-Man', src: '/video_library/spiderman_videos/Spiderman_video4.mp4' },
+  { id: 'spiderman_video1', label: 'Spiderman_video1', name: 'Spider-Man 1', category: 'Spider-Man', src: '/videos/Spiderman_video1.mp4' },
+  { id: 'spiderman_video2', label: 'Spiderman_video2', name: 'Spider-Man 2', category: 'Spider-Man', src: '/videos/Spiderman_video2.mp4' },
+  { id: 'spiderman_video3', label: 'Spiderman_video3', name: 'Spider-Man 3', category: 'Spider-Man', src: '/videos/Spiderman_video3.mp4' },
+  { id: 'spiderman_video4', label: 'Spiderman_video4', name: 'Spider-Man 4', category: 'Spider-Man', src: '/videos/Spiderman_video4.mp4' },
   
   // GTA videos
-  { id: 'gta_video1', label: 'GTA_video1', name: 'GTA 5 Gameplay', category: 'GTA', src: '/video_library/gta_videos/GTA_video1.mp4' },
+  { id: 'gta_video1', label: 'GTA_video1', name: 'GTA 5 Gameplay', category: 'GTA', src: '/videos/gta-video1.mp4' },
 ]
 
 const voiceOptions = [
@@ -385,7 +384,7 @@ export default function QuizPage() {
     return (
       <QuizPlayer
         questions={quizData.questions}
-        backgroundVideo={videoOption?.src || '/video_library/Minecraft_Parkour/Minecraft_video1.mp4'}
+        backgroundVideo={videoOption?.src || '/videos/Minecraft_video1.mp4'}
         selectedVoice={selectedVoice}
         onQuizComplete={handleQuizComplete}
       />
