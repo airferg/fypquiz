@@ -4,12 +4,13 @@ import { useState, useEffect } from 'react'
 import { useAuth } from '@/components/AuthProvider'
 import FileUploader from '@/components/FileUploader'
 import { useRouter } from 'next/navigation'
-import { BookOpen, Trophy, LogOut, GraduationCap } from 'lucide-react'
+import { BookOpen, Trophy, LogOut, GraduationCap, Menu, X } from 'lucide-react'
 
 
 export default function DashboardPage() {
   const { user, loading, signOut } = useAuth()
   const router = useRouter()
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
   
   const [isProcessing, setIsProcessing] = useState(false)
   const [uploadedContent, setUploadedContent] = useState('')
@@ -60,13 +61,6 @@ export default function DashboardPage() {
       
       const quizData = await response.json()
       
-      console.log('Dashboard - Received quiz data:', quizData)
-      console.log('Quiz title:', quizData.title)
-      console.log('Number of questions:', quizData.questions?.length)
-      if (quizData.questions && quizData.questions.length > 0) {
-        console.log('First question:', quizData.questions[0].question)
-      }
-      
       // Store in session storage for quiz page
       sessionStorage.setItem('quizData', JSON.stringify(quizData))
       sessionStorage.setItem('fileName', name)
@@ -105,8 +99,6 @@ export default function DashboardPage() {
     )
   }
 
-
-
   // Show auth page if not authenticated
   if (!user) {
     return null // Will redirect to auth
@@ -117,16 +109,13 @@ export default function DashboardPage() {
       {/* Header */}
       <header className="max-w-6xl mx-auto mb-8">
         <div className="flex justify-between items-center">
-          <div>
-            <div className="flex items-center space-x-3">
-              <img src="/favicon.svg" alt="FYPQuiz logo - Best quiz app for students" className="h-8 w-8" />
-              <h1 className="text-3xl font-bold text-white">fypquiz</h1>
-            </div>
-            <div className="flex items-center space-x-2 mt-1">
-              <p className="text-gray-300">Welcome back, {user.email}!</p>
-            </div>
+          <div className="flex items-center space-x-3">
+            <img src="/favicon.svg" alt="FYPQuiz logo - Best quiz app for students" className="h-8 w-8" />
+            <h1 className="text-2xl md:text-3xl font-bold text-white">fypquiz</h1>
           </div>
-          <div className="flex items-center space-x-4">
+
+          {/* Desktop actions */}
+          <div className="hidden md:flex items-center space-x-4">
             <button
               onClick={() => router.push('/blog')}
               className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-4 py-2 rounded-lg hover:bg-white/20 transition-all flex items-center space-x-2"
@@ -149,10 +138,40 @@ export default function DashboardPage() {
               <span>Sign Out</span>
             </button>
           </div>
+
+          {/* Mobile hamburger */}
+          <button
+            className="md:hidden inline-flex items-center justify-center p-2 rounded-md bg-white/10 hover:bg-white/20"
+            aria-label="Open menu"
+            onClick={() => setIsMenuOpen(true)}
+          >
+            <Menu className="h-6 w-6" />
+          </button>
         </div>
+
+        {/* Mobile drawer */}
+        {isMenuOpen && (
+          <div className="fixed inset-0 z-40 md:hidden">
+            <div className="absolute inset-0 bg-black/60" onClick={() => setIsMenuOpen(false)} />
+            <div className="absolute top-0 right-0 h-full w-72 bg-zinc-900 border-l border-white/10 shadow-xl p-6 flex flex-col">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold">Menu</h2>
+                <button
+                  className="inline-flex items-center justify-center p-2 rounded-md bg-white/10 hover:bg-white/20"
+                  aria-label="Close menu"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              <button onClick={() => { setIsMenuOpen(false); router.push('/blog') }} className="py-3 border-b border-white/10 text-left">Blog</button>
+              <button onClick={() => { setIsMenuOpen(false); router.push('/collection') }} className="py-3 border-b border-white/10 text-left">My Collection</button>
+              <button onClick={() => { setIsMenuOpen(false); handleSignOut() }} className="mt-6 bg-white/10 px-4 py-3 rounded-lg text-left">Sign Out</button>
+            </div>
+          </div>
+        )}
       </header>
-
-
 
       {/* File Upload Section */}
       <div className="max-w-4xl mx-auto">
