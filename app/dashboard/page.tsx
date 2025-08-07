@@ -5,6 +5,8 @@ import { useAuth } from '@/components/AuthProvider'
 import FileUploader from '@/components/FileUploader'
 import { useRouter } from 'next/navigation'
 import { BookOpen, Trophy, LogOut, GraduationCap } from 'lucide-react'
+import { NextSeo } from 'next-seo'
+import { pageSEO } from '@/lib/seo'
 
 export default function DashboardPage() {
   const { user, loading, signOut } = useAuth()
@@ -112,13 +114,24 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black p-4">
+    <>
+      <NextSeo
+        title={pageSEO.dashboard.title}
+        description={pageSEO.dashboard.description}
+        additionalMetaTags={[
+          {
+            name: 'keywords',
+            content: pageSEO.dashboard.keywords,
+          },
+        ]}
+      />
+      <div className="min-h-screen bg-black p-4">
       {/* Header */}
       <header className="max-w-6xl mx-auto mb-8">
         <div className="flex justify-between items-center">
           <div>
             <div className="flex items-center space-x-3">
-              <img src="/favicon.svg" alt="fypquiz logo" className="h-8 w-8" />
+              <img src="/favicon.svg" alt="FYPQuiz logo - Best quiz app for students" className="h-8 w-8" />
               <h1 className="text-3xl font-bold text-white">fypquiz</h1>
             </div>
             <div className="flex items-center space-x-2 mt-1">
@@ -179,5 +192,6 @@ export default function DashboardPage() {
         )}
       </div>
     </div>
+    </>
   )
 } 

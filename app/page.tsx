@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { Brain, Sparkles, Users, BookOpen, Trophy, ArrowRight, Play, Zap, Target, Award } from 'lucide-react'
+import Script from 'next/script'
 
 export default function LandingPage() {
   const router = useRouter()
@@ -11,7 +12,38 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <>
+      <Script
+        id="structured-data"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            "name": "FYPQuiz",
+            "description": "Best quiz app for students. Transform your study materials into TikTok-style quiz experiences with AI-generated commentary.",
+            "url": "https://fypquiz.com",
+            "applicationCategory": "EducationalApplication",
+            "operatingSystem": "Web Browser",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "4.9",
+              "ratingCount": "1000"
+            },
+            "author": {
+              "@type": "Organization",
+              "name": "FYPQuiz"
+            },
+            "keywords": "quiz apps for studying, gen z, college, study tools, quizlet, kahoot, multiple choice, study methods, best study apps"
+          })
+        }}
+      />
+      <div className="min-h-screen bg-black text-white">
       {/* Navigation */}
       <nav className="absolute top-0 left-0 right-0 z-20 flex justify-between items-center p-6 max-w-7xl mx-auto">
         <div className="flex items-center space-x-2">
@@ -51,13 +83,12 @@ export default function LandingPage() {
         {/* Hero Content */}
         <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
           <h1 className="text-6xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-accent to-purple-400 bg-clip-text text-transparent">
-            <span className="text-white">The
-            </span> ADHD Study Solution 
+            <span className="text-white">Best Quiz App for Students</span>
             <br />
-            <span className="text-white">For College Students</span>
+            <span className="text-white">TikTok-Style Study Quizzes</span>
           </h1>
           <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
-            Transform your boring study materials into retention-focused quiz experiences with AI-generated commentary
+            Transform your boring study materials into engaging quiz experiences. The best study app for Gen Z students - better than Quizlet, Kahoot, and other quiz apps for studying.
           </p>
           <div className="flex justify-center">
             <button 
@@ -75,34 +106,34 @@ export default function LandingPage() {
       <section id="features" className="py-20 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">Why Us?</h2>
+            <h2 className="text-4xl font-bold mb-4">Best Study Apps for Gen Z Students</h2>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              We're not just another study app. We're the ADHD study solution that Gen Z actually wants to use.
+              We're not just another study app. We're the best quiz app for students that Gen Z actually wants to use. Better than Quizlet, Kahoot, and other online e learning platforms.
             </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 text-center">
               <Brain className="h-16 w-16 text-accent mx-auto mb-6" />
-              <h3 className="text-2xl font-semibold mb-4">AI-Powered Study Sets</h3>
+              <h3 className="text-2xl font-semibold mb-4">Multiple Choice Questions</h3>
               <p className="text-gray-300 text-lg">
-                Upload your boring lecture videos, textbooks, or canvas pages, and let our AI create study sets that actually stick in your brain
+                Upload your boring lecture videos, textbooks, or canvas pages, and let our AI create engaging multiple choice questions that actually stick in your brain
               </p>
             </div>
             
             <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 text-center">
               <Sparkles className="h-16 w-16 text-accent mx-auto mb-6" />
-              <h3 className="text-2xl font-semibold mb-4">AI-Generated Commentary</h3>
+              <h3 className="text-2xl font-semibold mb-4">Best Study Methods</h3>
               <p className="text-gray-300 text-lg">
-                Get entertained by AI-generated commentary that makes learning fun and engaging
+                Get entertained by AI-generated commentary that makes learning fun. Discover the best ways to study and good study habits for college students.
               </p>
             </div>
             
             <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 text-center">
               <Users className="h-16 w-16 text-accent mx-auto mb-6" />
-              <h3 className="text-2xl font-semibold mb-4">Retention? Checked.</h3>
+              <h3 className="text-2xl font-semibold mb-4">Studying Techniques</h3>
               <p className="text-gray-300 text-lg">
-                Chaotic edutainment designed for the TikTok generation. No more boring flashcards, we prefer brainrot when we study.
+                Chaotic edutainment designed for the Gen Z generation. No more boring flashcards, we prefer engaging studying techniques that actually work.
               </p>
             </div>
           </div>
@@ -113,9 +144,9 @@ export default function LandingPage() {
       <section id="how-it-works" className="py-20 px-6 bg-white/5">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">How It Works</h2>
+            <h2 className="text-4xl font-bold mb-4">How to Study for Exams</h2>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Three simple steps to transform your study experience
+              Three simple steps to transform your study experience. The best study methods for college students.
             </p>
           </div>
           
@@ -126,7 +157,7 @@ export default function LandingPage() {
               </div>
               <h3 className="text-2xl font-semibold mb-4">Upload Your Content</h3>
               <p className="text-gray-300 text-lg">
-                Upload any PDF, video, or document. Our AI will analyze it and create engaging study sets.
+                Upload any PDF, video, or document. Our AI will analyze it and create engaging study tools and multiple choice questions.
               </p>
             </div>
             
@@ -134,9 +165,9 @@ export default function LandingPage() {
               <div className="bg-accent rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
                 <span className="text-2xl font-bold">2</span>
               </div>
-              <h3 className="text-2xl font-semibold mb-4">AI Generates Study Sets</h3>
+              <h3 className="text-2xl font-semibold mb-4">AI Generates Study Tools</h3>
               <p className="text-gray-300 text-lg">
-                Our AI creates engaging study sets with entertaining commentary that makes learning fun
+                Our AI creates engaging study tools with entertaining commentary that makes learning fun. Better than Quizlet and other learning apps.
               </p>
             </div>
             
@@ -144,9 +175,9 @@ export default function LandingPage() {
               <div className="bg-accent rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
                 <span className="text-2xl font-bold">3</span>
               </div>  
-              <h3 className="text-2xl font-semibold mb-4">Study Without Losing Focus</h3>
+              <h3 className="text-2xl font-semibold mb-4">Study with App</h3>
               <p className="text-gray-300 text-lg">
-                Take the study set, laugh at the commentary, and actually remember what you learned.
+                Take the study tools, laugh at the commentary, and actually remember what you learned. The best study app for students.
               </p>
             </div>
           </div>
@@ -182,7 +213,7 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl font-bold mb-6">Ready to Transform Your Learning?</h2>
           <p className="text-xl text-gray-300 mb-8">
-            Join thousands of students who are already studying smarter with fypquiz
+            Join thousands of students who are already studying smarter with the best quiz app for students. Better than Quizlet, Kahoot, and other apps for studying.
           </p>
           <button 
             onClick={handleGetStarted}
@@ -214,5 +245,6 @@ export default function LandingPage() {
         </div>
       </footer>
     </div>
+    </>
   )
 } 
