@@ -78,7 +78,8 @@ export async function GET() {
 
     const allPostsData = (allPosts as Array<{ keywords: string[] | null }> | null) ?? []
     const allKeywords: string[] = allPostsData.flatMap((post) => post.keywords ?? [])
-    const uniqueKeywords = [...new Set(allKeywords)]
+    // De-duplicate without using Set to avoid downlevelIteration issues
+    const uniqueKeywords: string[] = allKeywords.filter((kw, idx, arr) => arr.indexOf(kw) === idx)
 
     const stats = {
       totalPosts: totalPosts?.length || 0,
