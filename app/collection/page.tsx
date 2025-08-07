@@ -134,18 +134,17 @@ export default function CollectionPage() {
   const getVideoPath = (videoName: string) => {
     // Map video names to their actual file paths
     const videoMap: { [key: string]: string } = {
-      'minecraft_video1': '/video_library/Minecraft_Parkour/Minecraft_video1.mp4',
-      'minecraft_video2': '/video_library/Minecraft_Parkour/Minecraft_video2.mp4',
-      'minecraft_video3': '/video_library/Minecraft_Parkour/Minecraft_video3.mp4',
-      'minecraft_video4': '/video_library/Minecraft_Parkour/Minecraft_video4.mp4',
-      'minecraft_video5': '/video_library/Minecraft_Parkour/Minecraft_video5.mp4',
-      'minecraft_video6': '/video_library/Minecraft_Parkour/Minecraft_video6.mp4',
-      'minecraft_video7': '/video_library/Minecraft_Parkour/Minecraft_video7.mp4',
-      'Spiderman_video1': '/video_library/spiderman_videos/Spiderman_video1.mp4',
-      'Spiderman_video2': '/video_library/spiderman_videos/Spiderman_video2.mp4',
-      'Spiderman_video3': '/video_library/spiderman_videos/Spiderman_video3.mp4',
-      'Spiderman_video4': '/video_library/spiderman_videos/Spiderman_video4.mp4',
-      'gta_video1': '/video_library/gta_videos/GTA_video1.mp4',
+      'minecraft_video1': '/videos/Minecraft_video1.mp4',
+      'minecraft_video2': '/videos/Minecraft_video2.mp4',
+      'minecraft_video3': '/videos/Minecraft_video3.mp4',
+      'minecraft_video4': '/videos/Minecraft_video4.mp4',
+      'minecraft_video5': '/videos/Minecraft_video5.mp4',
+      'minecraft_video6': '/videos/Minecraft_video6.mp4',
+      'Spiderman_video1': '/videos/Spiderman_video1.mp4',
+      'Spiderman_video2': '/videos/Spiderman_video2.mp4',
+      'Spiderman_video3': '/videos/Spiderman_video3.mp4',
+      'Spiderman_video4': '/videos/Spiderman_video4.mp4',
+      'gta_video1': '/videos/gta-video1.mp4',
     }
     console.log('Getting video path for:', videoName, '->', videoMap[videoName] || videoName)
     return videoMap[videoName] || videoName

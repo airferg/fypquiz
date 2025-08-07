@@ -9,20 +9,19 @@ export const dynamic = 'force-dynamic'
 
 const videos = [
   // Minecraft
-  { label: 'Minecraft_video1', src: '/video_library/Minecraft_Parkour/Minecraft_video1.mp4' },
-  { label: 'Minecraft_video2', src: '/video_library/Minecraft_Parkour/Minecraft_video2.mp4' },
-  { label: 'Minecraft_video3', src: '/video_library/Minecraft_Parkour/Minecraft_video3.mp4' },
-  { label: 'Minecraft_video4', src: '/video_library/Minecraft_Parkour/Minecraft_video4.mp4' },
-  { label: 'Minecraft_video5', src: '/video_library/Minecraft_Parkour/Minecraft_video5.mp4' },
-  { label: 'Minecraft_video6', src: '/video_library/Minecraft_Parkour/Minecraft_video6.mp4' },
-  { label: 'Minecraft_video7', src: '/video_library/Minecraft_Parkour/Minecraft_video7.mp4' },
+  { label: 'Minecraft_video1', src: '/videos/Minecraft_video1.mp4' },
+  { label: 'Minecraft_video2', src: '/videos/Minecraft_video2.mp4' },
+  { label: 'Minecraft_video3', src: '/videos/Minecraft_video3.mp4' },
+  { label: 'Minecraft_video4', src: '/videos/Minecraft_video4.mp4' },
+  { label: 'Minecraft_video5', src: '/videos/Minecraft_video5.mp4' },
+  { label: 'Minecraft_video6', src: '/videos/Minecraft_video6.mp4' },
   // Spiderman
-  { label: 'Spiderman_video1', src: '/video_library/spiderman_videos/Spiderman_video1.mp4' },
-  { label: 'Spiderman_video2', src: '/video_library/spiderman_videos/Spiderman_video2.mp4' },
-  { label: 'Spiderman_video3', src: '/video_library/spiderman_videos/Spiderman_video3.mp4' },
-  { label: 'Spiderman_video4', src: '/video_library/spiderman_videos/Spiderman_video4.mp4' },
+  { label: 'Spiderman_video1', src: '/videos/Spiderman_video1.mp4' },
+  { label: 'Spiderman_video2', src: '/videos/Spiderman_video2.mp4' },
+  { label: 'Spiderman_video3', src: '/videos/Spiderman_video3.mp4' },
+  { label: 'Spiderman_video4', src: '/videos/Spiderman_video4.mp4' },
   // GTA
-  { label: 'GTA_video1', src: '/video_library/gta_videos/GTA_video1.mp4' },
+  { label: 'GTA_video1', src: '/videos/gta-video1.mp4' },
 ]
 
 export default function VideosPage() {
