@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { config } from '../../../lib/config'
 
+// Helper function to create a timeout promise
+const createTimeout = (ms: number) => new Promise((_, reject) => 
+  setTimeout(() => reject(new Error('Request timeout')), ms)
+)
+
 export async function POST(request: NextRequest) {
   try {
     const { text, voiceId } = await request.json()
@@ -19,14 +24,17 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+    // Truncate text if it's too long to improve speed
+    const truncatedText = text.length > 500 ? text.substring(0, 500) + '...' : text
+
+    const responsePromise = fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
       method: 'POST',
       headers: {
         'xi-api-key': config.elevenlabs.apiKey,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        text,
+        text: truncatedText,
         model_id: 'eleven_multilingual_v2',
         voice_settings: {
           stability: 0.5,
@@ -36,6 +44,12 @@ export async function POST(request: NextRequest) {
         },
       }),
     })
+
+    // Add 30-second timeout for voice generation
+    const response = await Promise.race([
+      responsePromise,
+      createTimeout(30000) // 30 seconds timeout
+    ]) as Response
 
     if (!response.ok) {
       const errorData = await response.text()
@@ -56,6 +70,15 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     console.error('Error generating voice:', error)
+    
+    // Check if it's a timeout error
+    if (error instanceof Error && error.message === 'Request timeout') {
+      return NextResponse.json(
+        { error: 'Voice generation timed out. Please try again.' },
+        { status: 408 }
+      )
+    }
+    
     return NextResponse.json(
       { error: 'Failed to generate voice audio' },
       { status: 500 }

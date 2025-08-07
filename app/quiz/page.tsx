@@ -112,6 +112,7 @@ export default function QuizPage() {
   const [finalScore, setFinalScore] = useState({ score: 0, total: 0 })
   const [voiceSearchTerm, setVoiceSearchTerm] = useState('')
   const [selectedVoiceCategory, setSelectedVoiceCategory] = useState<string>('all')
+  const [isStartingQuiz, setIsStartingQuiz] = useState(false)
 
   useEffect(() => {
     // Only run on client side
@@ -195,10 +196,13 @@ export default function QuizPage() {
   }, [router])
 
   const handleStartQuiz = async () => {
-    if (!quizData || !selectedVoice || !selectedVideo) {
-      alert('Please select both voice and video before starting')
-      return
-    }
+    try {
+      if (!quizData || !selectedVoice || !selectedVideo) {
+        alert('Please select both voice and video before starting')
+        return
+      }
+
+      setIsStartingQuiz(true)
 
     // Store the question count in session storage
     sessionStorage.setItem('questionCount', questionCount.toString())
@@ -206,9 +210,11 @@ export default function QuizPage() {
     // Clear any saved audio files since this is a new quiz
     sessionStorage.removeItem('savedAudioFiles')
     
-    // If the current quiz has a different number of questions than requested, regenerate
-    console.log('Current quiz questions:', quizData.questions.length, 'Requested questions:', questionCount)
-    if (quizData.questions.length !== questionCount) {
+    // Only regenerate if the question count is significantly different (more than 2 questions difference)
+    const questionDifference = Math.abs(quizData.questions.length - questionCount)
+    console.log('Current quiz questions:', quizData.questions.length, 'Requested questions:', questionCount, 'Difference:', questionDifference)
+    
+    if (questionDifference > 2) {
       console.log('Regenerating quiz with', questionCount, 'questions...')
       try {
         const response = await fetch('/api/generate-quiz', {
@@ -236,11 +242,17 @@ export default function QuizPage() {
         // Continue with existing quiz data if regeneration fails
       }
     } else {
-      console.log('Quiz already has the correct number of questions')
+      console.log('Quiz already has a similar number of questions, proceeding without regeneration')
     }
 
     setShowQuiz(true)
+    setIsStartingQuiz(false)
+  } catch (error) {
+    console.error('Error starting quiz:', error)
+    alert('Failed to start quiz. Please try again.')
+    setIsStartingQuiz(false)
   }
+}
 
   const handleQuizComplete = (score: number, total: number) => {
     setFinalScore({ score, total })
@@ -341,6 +353,29 @@ export default function QuizPage() {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-accent"></div>
+      </div>
+    )
+  }
+
+  // Show loading screen when starting quiz
+  if (isStartingQuiz) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black">
+        <div className="text-center max-w-md mx-auto p-8">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-accent mx-auto mb-6"></div>
+          <h2 className="text-2xl font-bold text-white mb-4">
+            Starting Chaotic Quiz Generation
+          </h2>
+          <p className="text-lg text-gray-300 mb-6">
+            AI is analyzing your content and creating a chaotic quiz experience...
+          </p>
+          <div className="w-64 bg-white/20 rounded-full h-2 mt-4 mx-auto">
+            <div className="bg-accent h-2 rounded-full animate-pulse"></div>
+          </div>
+          <p className="text-sm text-gray-400 mt-4">
+            This usually takes 30-60 seconds...
+          </p>
+        </div>
       </div>
     )
   }

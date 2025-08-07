@@ -39,14 +39,125 @@ export default function QuizPlayer({ questions, backgroundVideo, selectedVoice, 
   const [audioUrls, setAudioUrls] = useState<string[]>([])
   const [savedAudioFiles, setSavedAudioFiles] = useState<{ [key: string]: string }>({})
   const [characterUsage, setCharacterUsage] = useState(0)
+  const [audioProgress, setAudioProgress] = useState(0)
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false)
+  const [showAnswers, setShowAnswers] = useState(false)
+  const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null)
+  const [subtitleProgress, setSubtitleProgress] = useState(0)
+  const [currentSubtitle, setCurrentSubtitle] = useState('')
+  const [visibleWords, setVisibleWords] = useState<string[]>([])
+  const [hasGeneratedAudio, setHasGeneratedAudio] = useState(false)
   const scoreRef = useRef(0)
   const lastPlayedQuestionRef = useRef(-1)
 
   const currentQuestion = questions[currentQuestionIndex]
   const isLastQuestion = currentQuestionIndex === questions.length - 1
 
+  // Play audio for current question with real-time subtitles
+  const playQuestionAudio = () => {
+    console.log('playQuestionAudio called');
+    console.log('audioUrls:', audioUrls);
+    console.log('currentQuestionIndex:', currentQuestionIndex);
+    console.log('audioUrls[currentQuestionIndex]:', audioUrls[currentQuestionIndex]);
+    console.log('isPlayingAudio:', isPlayingAudio);
+    
+    if (audioUrls[currentQuestionIndex] && !isPlayingAudio) {
+      console.log('Creating audio element');
+      const audio = new Audio(audioUrls[currentQuestionIndex])
+      
+      // Reset subtitle state
+      setSubtitleProgress(0)
+      setCurrentSubtitle('')
+      setVisibleWords([])
+      
+      // Split question into words for animation
+      const words = currentQuestion.question.split(' ')
+      const totalWords = words.length
+      const audioDuration = Math.max(2, totalWords * 0.3) // More realistic timing: 0.3s per word, minimum 2s
+      const wordInterval = audioDuration / totalWords
+      
+      audio.addEventListener('play', () => {
+        console.log('Audio play event fired');
+        setIsPlayingAudio(true)
+        setShowAnswers(false)
+        setCurrentSubtitle(currentQuestion.question)
+        
+        // Start word-by-word animation
+        let currentWordIndex = 0
+        const wordTimer = setInterval(() => {
+          if (currentWordIndex < totalWords) {
+            setVisibleWords(words.slice(0, currentWordIndex + 1))
+            currentWordIndex++
+          } else {
+            clearInterval(wordTimer)
+          }
+        }, wordInterval * 1000)
+        
+        // Store timer reference for cleanup
+        audio.wordTimer = wordTimer
+      })
+      
+      audio.addEventListener('timeupdate', () => {
+        if (audio.duration > 0) {
+          const progress = (audio.currentTime / audio.duration) * 100
+          setSubtitleProgress(progress)
+        }
+      })
+      
+      audio.addEventListener('ended', () => {
+        console.log('Audio ended event fired');
+        setIsPlayingAudio(false)
+        setSubtitleProgress(100)
+        
+        // 1-second delay before showing answers
+        setTimeout(() => {
+          console.log('Showing answers after delay');
+          setShowAnswers(true)
+        }, 1000)
+      })
+      
+      audio.addEventListener('error', (e) => {
+        console.error('Audio playback error:', e);
+        setIsPlayingAudio(false)
+        setShowAnswers(true)
+      })
+      
+      console.log('Attempting to play audio');
+      audio.play().then(() => {
+        console.log('Audio play promise resolved');
+      }).catch((error) => {
+        console.error('Audio play failed:', error);
+        setIsPlayingAudio(false)
+        setShowAnswers(true)
+      })
+      setCurrentAudio(audio)
+    } else if (!audioUrls[currentQuestionIndex]) {
+      // If no audio, show answers immediately
+      console.log('No audio URL found, showing answers immediately');
+      setShowAnswers(true)
+    } else {
+      console.log('Audio is already playing or no audio available');
+    }
+  }
+
+  // Stop current audio
+  const stopCurrentAudio = () => {
+    if (currentAudio) {
+      // Clear word timer if it exists
+      if (currentAudio.wordTimer) {
+        clearInterval(currentAudio.wordTimer)
+      }
+      currentAudio.pause()
+      currentAudio.currentTime = 0
+      setCurrentAudio(null)
+    }
+    setIsPlayingAudio(false)
+    setVisibleWords([])
+  }
+
   const handleCancelQuiz = () => {
     if (confirm('Are you sure you want to exit the quiz? Your progress will be lost.')) {
+      stopCurrentAudio()
       router.push('/dashboard')
     }
   }
@@ -55,7 +166,8 @@ export default function QuizPlayer({ questions, backgroundVideo, selectedVoice, 
     try {
       // Convert blob to base64
       const arrayBuffer = await audioBlob.arrayBuffer()
-      const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)))
+      const uint8Array = new Uint8Array(arrayBuffer)
+      const base64 = btoa(String.fromCharCode.apply(null, Array.from(uint8Array)))
       
       // Save to our API
       const response = await fetch('/api/save-audio', {
@@ -83,94 +195,175 @@ export default function QuizPlayer({ questions, backgroundVideo, selectedVoice, 
     }
   }
 
-  useEffect(() => {
-    // Generate individual audio for each question (more reliable than batch)
-    const generateQuestionAudio = async () => {
-      try {
-        console.log('🔄 Generating individual question audio...');
-        
-        const newAudioUrls: string[] = [];
-        
-        for (let i = 0; i < questions.length; i++) {
-          const question = questions[i];
-          console.log(`🎤 Generating audio for question ${i + 1}/${questions.length}`);
-          
-          // Create question text - just the question, not "Question X:"
-          const questionText = question.question;
-          
-          // Generate question audio
-          const questionResponse = await fetch('/api/generate-voice', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              text: questionText,
-              voiceId: selectedVoice,
-            }),
-          });
+  // Generate audio for a single question
+  const generateSingleAudio = async (questionText: string, questionIndex: number): Promise<string> => {
+    try {
+      console.log(`🎵 Generating audio for question ${questionIndex + 1}: "${questionText.substring(0, 50)}..."`);
+      console.log(`Voice ID: ${selectedVoice}`);
+      
+      const response = await fetch('/api/generate-voice', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text: questionText,
+          voiceId: selectedVoice,
+        }),
+      });
 
-          if (questionResponse.ok) {
-            const questionAudioBlob = await questionResponse.blob();
-            const questionAudioUrl = URL.createObjectURL(questionAudioBlob);
-            newAudioUrls.push(questionAudioUrl);
-            console.log(`✅ Question audio generated for question ${i + 1}`);
-          } else {
-            console.warn(`❌ Failed to generate question audio for question ${i + 1}`);
-            newAudioUrls.push('');
-          }
-        }
-        
-        setAudioUrls(newAudioUrls);
-        setIsLoading(false);
-        console.log('🎉 All question audio generated!');
-      } catch (error) {
-        console.error('❌ Error generating audio:', error);
-        setIsLoading(false);
+      console.log(`Response status: ${response.status}`);
+      
+      if (response.ok) {
+        const audioBlob = await response.blob();
+        console.log(`Audio blob size: ${audioBlob.size} bytes`);
+        const audioUrl = URL.createObjectURL(audioBlob);
+        console.log(`✅ Audio generated for question ${questionIndex + 1}, URL: ${audioUrl}`);
+        return audioUrl;
+      } else {
+        const errorText = await response.text();
+        console.warn(`❌ Failed to generate audio for question ${questionIndex + 1}:`, errorText);
+        return '';
       }
-    };
+    } catch (error) {
+      console.error(`Error generating audio for question ${questionIndex + 1}:`, error);
+      return '';
+    }
+  }
 
+  useEffect(() => {
+    console.log('🔄 Audio generation useEffect triggered');
+    console.log('Questions:', questions.length);
+    console.log('Selected voice:', selectedVoice);
+    
     // Check for saved audio files first
     const savedAudioFilesStr = sessionStorage.getItem('savedAudioFiles')
     const savedAudioFiles = savedAudioFilesStr ? JSON.parse(savedAudioFilesStr) : {}
+    console.log('Saved audio files found:', Object.keys(savedAudioFiles).length);
+    
+    // Check if we already have audio URLs or have generated audio (prevent regeneration)
+    if (audioUrls.length > 0 || hasGeneratedAudio) {
+      console.log('Audio URLs already exist or audio already generated, skipping generation');
+      setIsLoading(false)
+      return
+    }
     
     if (Object.keys(savedAudioFiles).length > 0) {
       // Use saved audio files
       console.log('Using saved audio files:', savedAudioFiles)
       setSavedAudioFiles(savedAudioFiles)
       
-      // Convert saved URLs to local URLs for playback
+      // Convert saved base64 data to blob URLs for playback
       const audioUrls = questions.map((_, index) => {
-        const savedUrl = savedAudioFiles[`question-${index + 1}`]
-        return savedUrl || ''
+        const savedAudioData = savedAudioFiles[`question-${index + 1}`]
+        if (savedAudioData && savedAudioData.url) {
+          // Convert base64 to blob URL
+          const base64Data = savedAudioData.url.split(',')[1]
+          const audioBlob = new Blob([Uint8Array.from(atob(base64Data), c => c.charCodeAt(0))], { type: 'audio/mpeg' })
+          const audioUrl = URL.createObjectURL(audioBlob)
+          console.log(`Converted saved audio for question ${index + 1} to URL: ${audioUrl}`)
+          return audioUrl
+        }
+        return ''
       }).filter(url => url !== '')
       
+      console.log('Converted audio URLs:', audioUrls)
       setAudioUrls(audioUrls)
       setIsLoading(false)
       return
     }
 
-    // Generate new audio
-    generateQuestionAudio();
+    // Generate audio in parallel with progress tracking
+    const generateAudioParallel = async () => {
+      try {
+        console.log('🔄 Generating audio in parallel...');
+        console.log('Selected voice:', selectedVoice);
+        console.log('Number of questions:', questions.length);
+        
+        // Start with first 3 questions immediately, then lazy load the rest
+        const initialBatch = Math.min(3, questions.length);
+        const remainingQuestions = questions.slice(initialBatch);
+        
+        // Generate first batch in parallel
+        const initialPromises = questions.slice(0, initialBatch).map((question, index) =>
+          generateSingleAudio(question.question, index)
+        );
+        
+        const initialResults = await Promise.all(initialPromises);
+        console.log('Initial audio results:', initialResults);
+        setAudioUrls(initialResults);
+        setAudioProgress(initialBatch);
+        
+        // If we have more questions, generate them in the background
+        if (remainingQuestions.length > 0) {
+          const remainingPromises = remainingQuestions.map((question, index) =>
+            generateSingleAudio(question.question, initialBatch + index)
+          );
+          
+          // Process remaining questions in batches of 2 for better performance
+          for (let i = 0; i < remainingPromises.length; i += 2) {
+            const batch = remainingPromises.slice(i, i + 2);
+            const batchResults = await Promise.all(batch);
+            
+            setAudioUrls(prev => [...prev, ...batchResults]);
+            setAudioProgress(initialBatch + i + batch.length);
+            
+            // Small delay to prevent overwhelming the API
+            await new Promise(resolve => setTimeout(resolve, 100));
+          }
+        }
+        
+        setIsLoading(false);
+        setHasGeneratedAudio(true);
+        console.log('🎉 All audio generated!');
+        console.log('Final audioUrls:', audioUrls);
+      } catch (error) {
+        console.error('❌ Error generating audio:', error);
+        setIsLoading(false);
+      }
+    };
+
+    generateAudioParallel();
   }, [questions, selectedVoice])
 
   useEffect(() => {
-    if (isLoading || audioUrls.length === 0) return
+    if (isLoading) return
 
-    // Only play audio if we haven't already played it for this question
-    if (lastPlayedQuestionRef.current !== currentQuestionIndex && 
-        audioUrls[currentQuestionIndex] && 
-        audioUrls[currentQuestionIndex] !== '') {
-      console.log(`🎵 Playing QUESTION audio for question ${currentQuestionIndex + 1} - QUESTION CHANGED`);
-      const audio = new Audio(audioUrls[currentQuestionIndex]);
-      audio.play().catch(console.error);
-      lastPlayedQuestionRef.current = currentQuestionIndex;
-    }
-    
-    // Reset answered state for new question
+    // Reset states for new question
     setAnsweredCurrentQuestion(false)
     setCurrentQuestionCorrect(false)
+    setShowAnswers(false)
+    setSubtitleProgress(0)
+    setCurrentSubtitle('')
+    setVisibleWords([])
+    
+    // Stop any currently playing audio
+    stopCurrentAudio()
+    
+    // Check if we have audio for this question
+    if (audioUrls.length > 0 && audioUrls[currentQuestionIndex] && audioUrls[currentQuestionIndex] !== '') {
+      console.log(`🎵 Playing audio for question ${currentQuestionIndex + 1}`);
+      setTimeout(() => {
+        playQuestionAudio()
+      }, 500)
+    } else {
+      // If no audio, show answers immediately
+      console.log('No audio available, showing answers immediately');
+      console.log('audioUrls length:', audioUrls.length);
+      console.log('currentQuestionIndex:', currentQuestionIndex);
+      console.log('audioUrls[currentQuestionIndex]:', audioUrls[currentQuestionIndex]);
+      setShowAnswers(true)
+    }
+    
+    lastPlayedQuestionRef.current = currentQuestionIndex;
   }, [currentQuestionIndex, isLoading, audioUrls])
+
+  // Cleanup audio when component unmounts
+  useEffect(() => {
+    return () => {
+      stopCurrentAudio()
+    }
+  }, [])
 
   const handleAnswer = async (isCorrect: boolean) => {
     console.log('=== handleAnswer called ===')
@@ -201,9 +394,16 @@ export default function QuizPlayer({ questions, backgroundVideo, selectedVoice, 
   const handleNext = () => {
     console.log(`Moving to next question: ${currentQuestionIndex + 1} -> ${currentQuestionIndex + 2}`)
     console.log(`Resetting state for next question`)
+    
+    // Stop current audio before moving to next question
+    stopCurrentAudio()
+    
     setCurrentQuestionIndex(currentQuestionIndex + 1)
     setAnsweredCurrentQuestion(false)
     setCurrentQuestionCorrect(false)
+    setShowAnswers(false)
+    setSubtitleProgress(0)
+    setCurrentSubtitle('')
   }
 
   const handleFinishQuiz = () => {
@@ -229,7 +429,16 @@ export default function QuizPlayer({ questions, backgroundVideo, selectedVoice, 
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-accent mx-auto mb-4"></div>
-          <p className="text-lg text-gray-300">Generating AI voices for your quiz...</p>
+          <p className="text-lg text-gray-300 mb-2">Generating AI voices for your quiz...</p>
+          <p className="text-sm text-gray-400">
+            {audioProgress > 0 ? `${audioProgress}/${questions.length} questions processed` : 'Starting...'}
+          </p>
+          <div className="w-64 bg-white/20 rounded-full h-2 mt-4 mx-auto">
+            <div 
+              className="bg-accent h-2 rounded-full transition-all duration-300"
+              style={{ width: `${(audioProgress / questions.length) * 100}%` }}
+            ></div>
+          </div>
         </div>
       </div>
     )
@@ -284,18 +493,61 @@ export default function QuizPlayer({ questions, backgroundVideo, selectedVoice, 
           </button>
         </div>
 
-        {/* Question Content - TikTok Style */}
-        <div className="absolute inset-0 flex items-center justify-center p-4 z-10">
-          <div className="w-full max-w-xs">
-            <QuestionCard
-              question={currentQuestion}
-              onAnswer={handleAnswer}
-              onNext={handleNext}
-              onFinishQuiz={handleFinishQuiz}
-              isLastQuestion={isLastQuestion}
-            />
+        {/* TikTok-style word-by-word subtitles */}
+        {isPlayingAudio && (
+          <div className="absolute inset-0 flex items-center justify-center p-4 z-10">
+            <div className="w-full max-w-2xl">
+              {/* Word-by-word subtitle display */}
+              <div className="text-center">
+                <div className="inline-block">
+                  {visibleWords.map((word, index) => (
+                    <span
+                      key={index}
+                      className="inline-block text-2xl font-bold text-white mx-1 animate-fadeIn"
+                      style={{
+                        animationDelay: `${index * 0.1}s`,
+                        textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)'
+                      }}
+                    >
+                      {word}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Skip button */}
+              <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+                <button
+                  onClick={() => {
+                    stopCurrentAudio()
+                    // 1-second delay before showing answers (same as audio end)
+                    setTimeout(() => {
+                      setShowAnswers(true)
+                    }, 1000)
+                  }}
+                  className="px-4 py-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-all text-sm backdrop-blur-sm"
+                >
+                  Skip Audio
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* Question Content - TikTok Style */}
+        {showAnswers && (
+          <div className="absolute inset-0 flex items-center justify-center p-4 z-10">
+            <div className="w-full max-w-xs">
+              <QuestionCard
+                question={currentQuestion}
+                onAnswer={handleAnswer}
+                onNext={handleNext}
+                onFinishQuiz={handleFinishQuiz}
+                isLastQuestion={isLastQuestion}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
