@@ -21,6 +21,7 @@ export default function LandingPage() {
         <div className="flex items-center space-x-6">
           <a href="#features" className="hover:text-accent transition-colors">Features</a>
           <a href="#how-it-works" className="hover:text-accent transition-colors">How it Works</a>
+          <a href="/blog" className="hover:text-accent transition-colors">Blog</a>
           <button 
             onClick={handleGetStarted}
             className="bg-accent text-white px-6 py-2 rounded-lg hover:bg-accent/90 transition-all flex items-center space-x-2"
@@ -203,6 +204,9 @@ export default function LandingPage() {
               <span className="text-xl font-bold">fypquiz</span>
             </div>
             <div className="flex space-x-6 text-sm text-gray-400">
+              <a href="/blog" className="hover:text-white transition-colors">Blog</a>
+              <a href="#features" className="hover:text-white transition-colors">Features</a>
+              <a href="#how-it-works" className="hover:text-white transition-colors">How it Works</a>
               <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
               <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
               <a href="#" className="hover:text-white transition-colors">Contact</a>

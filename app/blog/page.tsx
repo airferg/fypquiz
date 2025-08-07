@@ -70,6 +70,10 @@ export default function BlogPage() {
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
               Discover the best study methods, Gen Z learning hacks, and how to make studying actually fun with TikTok-style quizzes.
             </p>
+            <div className="mt-6 flex items-center justify-center gap-4">
+              <Link href="/" className="text-accent hover:text-accent/80">Back to Home</Link>
+              <Link href="/auth" className="text-accent hover:text-accent/80">Try FYPQuiz Free</Link>
+            </div>
           </div>
         </div>
       </div>
@@ -81,6 +85,11 @@ export default function BlogPage() {
             <BookOpen className="h-16 w-16 text-gray-400 mx-auto mb-4" />
             <h2 className="text-2xl font-semibold text-white mb-2">No posts yet</h2>
             <p className="text-gray-300">Our AI is working on creating amazing content for you!</p>
+            <div className="mt-6">
+              <Link href="/auth" className="inline-flex items-center space-x-2 bg-accent text-white px-6 py-3 rounded-lg hover:bg-accent/90">
+                <span>Create Your First Quiz</span>
+              </Link>
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -132,6 +141,12 @@ export default function BlogPage() {
             ))}
           </div>
         )}
+
+        <div className="mt-16 text-center">
+          <Link href="/" className="text-accent hover:text-accent/80 mr-4">Home</Link>
+          <Link href="/dashboard" className="text-accent hover:text-accent/80 mr-4">Dashboard</Link>
+          <Link href="/auth" className="text-accent hover:text-accent/80">Sign Up</Link>
+        </div>
       </div>
     </div>
   )

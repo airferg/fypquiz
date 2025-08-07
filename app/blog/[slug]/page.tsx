@@ -153,6 +153,13 @@ export default function BlogPostPage() {
           />
         </article>
         
+        {/* Related links */}
+        <div className="mt-8 flex flex-wrap gap-4 text-accent">
+          <Link href="/blog" className="hover:text-accent/80">All Articles</Link>
+          <Link href="/" className="hover:text-accent/80">Home</Link>
+          <Link href="/auth" className="hover:text-accent/80">Try FYPQuiz</Link>
+        </div>
+        
         {/* CTA Section */}
         <div className="mt-12 bg-gradient-to-r from-accent/20 to-purple-500/20 rounded-2xl p-8 text-center">
           <h2 className="text-2xl font-bold text-white mb-4">Ready to Try These Study Methods?</h2>
