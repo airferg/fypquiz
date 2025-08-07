@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useAuth } from '@/components/AuthProvider'
 import FileUploader from '@/components/FileUploader'
 import { useRouter } from 'next/navigation'
-import { Brain, Sparkles, Users, BookOpen, Trophy, LogOut, GraduationCap } from 'lucide-react'
+import { BookOpen, Trophy, LogOut, GraduationCap } from 'lucide-react'
 
 export default function DashboardPage() {
   const { user, loading, signOut } = useAuth()
@@ -13,6 +13,7 @@ export default function DashboardPage() {
   const [isProcessing, setIsProcessing] = useState(false)
   const [uploadedContent, setUploadedContent] = useState('')
   const [fileName, setFileName] = useState('')
+  const [processingStep, setProcessingStep] = useState('')
 
   // Redirect to auth if not authenticated
   useEffect(() => {
@@ -25,6 +26,7 @@ export default function DashboardPage() {
     setUploadedContent(content)
     setFileName(name)
     setIsProcessing(true)
+    setProcessingStep('Analyzing your content...')
 
     // Clear any old session storage data from previous quizzes
     sessionStorage.removeItem('selectedVoice')
@@ -35,6 +37,8 @@ export default function DashboardPage() {
     sessionStorage.removeItem('uploadedContent')
 
     try {
+      setProcessingStep('Generating quiz questions with AI...')
+      
       const response = await fetch('/api/generate-quiz', {
         method: 'POST',
         headers: {
@@ -51,6 +55,8 @@ export default function DashboardPage() {
         throw new Error('Failed to generate quiz')
       }
 
+      setProcessingStep('Finalizing your quiz...')
+      
       const quizData = await response.json()
       
       console.log('Dashboard - Received quiz data:', quizData)
@@ -65,12 +71,15 @@ export default function DashboardPage() {
       sessionStorage.setItem('fileName', name)
       sessionStorage.setItem('uploadedContent', content)
       
+      setProcessingStep('Redirecting to quiz...')
+      
       router.push('/quiz')
     } catch (error) {
       console.error('Error generating quiz:', error)
       alert('Failed to generate quiz. Please try again.')
     } finally {
       setIsProcessing(false)
+      setProcessingStep('')
     }
   }
 
@@ -95,6 +104,8 @@ export default function DashboardPage() {
     )
   }
 
+
+
   // Show auth page if not authenticated
   if (!user) {
     return null // Will redirect to auth
@@ -106,7 +117,10 @@ export default function DashboardPage() {
       <header className="max-w-6xl mx-auto mb-8">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-white">fypquiz</h1>
+            <div className="flex items-center space-x-3">
+              <img src="/favicon.svg" alt="fypquiz logo" className="h-8 w-8" />
+              <h1 className="text-3xl font-bold text-white">fypquiz</h1>
+            </div>
             <div className="flex items-center space-x-2 mt-1">
               <p className="text-gray-300">Welcome back, {user.email}!</p>
             </div>
@@ -130,28 +144,7 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      {/* Features Grid */}
-      <div className="max-w-6xl mx-auto mb-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-center">
-            <Brain className="h-12 w-12 text-accent mx-auto mb-4" />
-            <h3 className="text-xl font-semibold mb-2 text-white">AI-Powered Learning</h3>
-            <p className="text-gray-300">Upload any document and let AI create hilarious quiz questions</p>
-          </div>
-          
-          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-center">
-            <Sparkles className="h-12 w-12 text-accent mx-auto mb-4" />
-            <h3 className="text-xl font-semibold mb-2 text-white">AI-Generated Commentary</h3>
-            <p className="text-gray-300">Get entertained by AI-generated commentary that makes learning fun</p>
-          </div>
-          
-          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-center">
-            <Users className="h-12 w-12 text-accent mx-auto mb-4" />
-            <h3 className="text-xl font-semibold mb-2 text-white">Gen Z Approved</h3>
-            <p className="text-gray-300">Chaotic edutainment designed for the TikTok generation</p>
-          </div>
-        </div>
-      </div>
+
 
       {/* File Upload Section */}
       <div className="max-w-4xl mx-auto">
@@ -173,8 +166,14 @@ export default function DashboardPage() {
         {isProcessing && (
           <div className="mt-8 text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent mx-auto mb-4"></div>
-            <p className="text-lg text-gray-300">
-              AI is analyzing your content and creating a chaotic quiz experience...
+            <p className="text-lg text-gray-300 mb-2">
+              {processingStep || 'AI is analyzing your content and creating a chaotic quiz experience...'}
+            </p>
+            <div className="w-64 bg-white/20 rounded-full h-2 mt-4 mx-auto">
+              <div className="bg-accent h-2 rounded-full animate-pulse"></div>
+            </div>
+            <p className="text-sm text-gray-400 mt-2">
+              This usually takes 30-60 seconds...
             </p>
           </div>
         )}

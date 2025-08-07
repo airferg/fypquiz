@@ -10,6 +10,8 @@ export async function extractTextFromFile(file: File): Promise<string> {
       return await extractTextFromPDF(file)
     } else if (fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
       return await extractTextFromDOCX(file)
+    } else if (fileType.startsWith('video/')) {
+      return await extractTextFromVideo(file)
     } else {
       throw new Error(`Unsupported file type: ${fileType}`)
     }
@@ -109,4 +111,34 @@ async function extractTextFromDOCX(file: File): Promise<string> {
     reader.onerror = () => reject(new Error('Failed to read DOCX file'))
     reader.readAsArrayBuffer(file)
   })
+}
+
+async function extractTextFromVideo(file: File): Promise<string> {
+  // Validate file size (max 200MB)
+  const maxSize = 200 * 1024 * 1024 // 200MB
+  if (file.size > maxSize) {
+    throw new Error('Video file too large. Maximum size is 200MB. For larger files, try compressing the video first.')
+  }
+
+  // Send video to server for processing
+  const formData = new FormData()
+  formData.append('file', file)
+  
+  try {
+    const response = await fetch('/api/extract-video-text', {
+      method: 'POST',
+      body: formData,
+    })
+    
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || 'Failed to extract text from video')
+    }
+    
+    const data = await response.json()
+    return data.text
+  } catch (error) {
+    console.error('Video extraction error:', error)
+    throw new Error('Failed to extract text from video. Please ensure the video has clear audio.')
+  }
 } 

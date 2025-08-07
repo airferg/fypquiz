@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { Upload, FileText, File, AlertCircle } from 'lucide-react'
+import { Upload, FileText, File, AlertCircle, Video } from 'lucide-react'
 import { extractTextFromFile } from '@/lib/fileProcessor'
 
 interface FileUploaderProps {
@@ -46,6 +46,8 @@ export default function FileUploader({ onFileUpload, isLoading = false }: FileUp
         setError('PDF processing failed. This might be an image-based PDF. Try converting it to text or uploading a different file.')
       } else if (errorMessage.includes('DOCX')) {
         setError('DOCX processing failed. Try saving the file as a different format or uploading a text file.')
+      } else if (errorMessage.includes('video') || errorMessage.includes('Video')) {
+        setError(errorMessage)
       } else {
         setError(errorMessage)
       }
@@ -57,7 +59,10 @@ export default function FileUploader({ onFileUpload, isLoading = false }: FileUp
     accept: {
       'text/plain': ['.txt'],
       'application/pdf': ['.pdf'],
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx']
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
+      'video/mp4': ['.mp4'],
+      'video/quicktime': ['.mov'],
+      'video/x-msvideo': ['.avi']
     },
     multiple: false,
     disabled: isLoading
@@ -86,6 +91,7 @@ export default function FileUploader({ onFileUpload, isLoading = false }: FileUp
               <Upload className="h-8 w-8 text-accent" />
               <FileText className="h-8 w-8 text-accent" />
               <File className="h-8 w-8 text-accent" />
+              <Video className="h-8 w-8 text-accent" />
             </div>
           )}
           
@@ -94,7 +100,7 @@ export default function FileUploader({ onFileUpload, isLoading = false }: FileUp
               {isDragActive ? 'Drop your file here' : 'Drag & drop your study material'}
             </p>
             <p className="text-sm text-gray-300 mt-2">
-              Supports PDF, DOCX, and TXT files
+              Supports PDF, DOCX, TXT, and video files (MP4, MOV, AVI)
             </p>
             {processingStatus && (
               <p className="text-sm text-accent mt-2">{processingStatus}</p>
@@ -122,6 +128,8 @@ export default function FileUploader({ onFileUpload, isLoading = false }: FileUp
           <li>• Ensure files are not password-protected</li>
           <li>• Try converting image-based PDFs to text first</li>
           <li>• Plain text files work best</li>
+          <li>• Videos should have clear speech audio (max 10 minutes)</li>
+          <li>• Video files must be under 200MB</li>
         </ul>
       </div>
     </div>
