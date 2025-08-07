@@ -61,9 +61,9 @@ export async function GET() {
       return NextResponse.json({ error: 'Failed to get stats' }, { status: 500 })
     }
 
-    const averageReadTime = readTimes && readTimes.length > 0 
-      ? Math.round(readTimes.reduce((sum, post) => sum + (post.read_time || 0), 0) / readTimes.length)
-      : 0
+    const readTimesData = (readTimes as Array<{ read_time: number | null }> | null) ?? []
+    const totalReadTime: number = readTimesData.reduce((sum: number, post: { read_time: number | null }) => sum + (post.read_time ?? 0), 0)
+    const averageReadTime: number = readTimesData.length > 0 ? Math.round(totalReadTime / readTimesData.length) : 0
 
     // Get total unique keywords
     const { data: allPosts, error: keywordsError } = await supabase
@@ -76,7 +76,8 @@ export async function GET() {
       return NextResponse.json({ error: 'Failed to get stats' }, { status: 500 })
     }
 
-    const allKeywords = allPosts?.flatMap(post => post.keywords || []) || []
+    const allPostsData = (allPosts as Array<{ keywords: string[] | null }> | null) ?? []
+    const allKeywords: string[] = allPostsData.flatMap((post) => post.keywords ?? [])
     const uniqueKeywords = [...new Set(allKeywords)]
 
     const stats = {
