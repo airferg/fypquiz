@@ -22,13 +22,13 @@ export default function LandingPage() {
           <a href="#features" className="hover:text-accent transition-colors">Features</a>
           <a href="#how-it-works" className="hover:text-accent transition-colors">How it Works</a>
           <a href="/blog" className="hover:text-accent transition-colors">Blog</a>
-          <button 
-            onClick={handleGetStarted}
+          <a 
+            href="/auth"
             className="bg-accent text-white px-6 py-2 rounded-lg hover:bg-accent/90 transition-all flex items-center space-x-2"
           >
             <span>Get Started</span>
             <ArrowRight className="h-4 w-4" />
-          </button>
+          </a>
         </div>
       </nav>
 

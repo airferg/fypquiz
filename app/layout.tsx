@@ -11,6 +11,29 @@ export const metadata: Metadata = {
   title: 'FYPQuiz - ADHD Study Solution for College Students',
   description: 'Transform your study materials into retention-focused quiz experiences with AI-generated commentary. The ADHD study solution that actually works.',
   keywords: 'quiz apps for studying, gen z, college, study tools, quizlet, kahoot, multiple choice, study methods, learning app, online e learning platforms, study with app, flashcard digital, apps for studying, how to study for exams, best ways to study, good study habits, studying techniques, gen z years, gen z generation, online platform for learning, language study app, quizletcom, learning app, quizlet app, make a quizlet, multiple choice questions, study methods',
+  openGraph: {
+    title: 'FYPQuiz - ADHD Study Solution for College Students',
+    description: 'Transform your study materials into retention-focused quiz experiences with AI-generated commentary.',
+    url: 'https://fypquiz.com',
+    siteName: 'FYPQuiz',
+    images: [
+      {
+        url: '/favicon.svg',
+        width: 512,
+        height: 512,
+        alt: 'FYPQuiz logo',
+      },
+    ],
+    type: 'website',
+    locale: 'en_US',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'FYPQuiz - ADHD Study Solution for College Students',
+    description: 'Transform your study materials into retention-focused quiz experiences with AI-generated commentary.',
+    images: ['/favicon.svg'],
+    creator: '@fypquiz',
+  },
 }
 
 export default function RootLayout({
