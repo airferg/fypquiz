@@ -4,8 +4,6 @@ import './globals.css'
 import { AuthProvider } from '@/components/AuthProvider'
 import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
-import { DefaultSeo } from 'next-seo'
-import { defaultSEO } from '@/lib/seo'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -40,7 +38,6 @@ export default function RootLayout({
         <script src="https://analytics.ahrefs.com/analytics.js" data-key="bUgcSNd8qR1FY2TljsirxA" async></script>
       </head>
       <body className={inter.className}>
-        <DefaultSeo {...defaultSEO} />
         <AuthProvider>
           {children}
         </AuthProvider>

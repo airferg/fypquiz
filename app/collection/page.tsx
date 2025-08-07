@@ -5,8 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/components/AuthProvider'
 import { ArrowLeft, Play, Trophy, Calendar, FileText, Trash2 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
-import { NextSeo } from 'next-seo'
-import { pageSEO } from '@/lib/seo'
+
 
 // Disable SSR for this page
 export const dynamic = 'force-dynamic'
@@ -188,18 +187,7 @@ export default function CollectionPage() {
   }
 
   return (
-    <>
-      <NextSeo
-        title={pageSEO.collection.title}
-        description={pageSEO.collection.description}
-        additionalMetaTags={[
-          {
-            name: 'keywords',
-            content: pageSEO.collection.keywords,
-          },
-        ]}
-      />
-      <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black">
       {/* Fixed Back Button - Outside Header */}
       <div className="fixed top-4 left-4 z-[9999]">
         <button
@@ -338,6 +326,5 @@ export default function CollectionPage() {
         )}
       </div>
     </div>
-    </>
   )
 } 

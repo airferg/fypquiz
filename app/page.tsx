@@ -2,7 +2,6 @@
 
 import { useRouter } from 'next/navigation'
 import { Brain, Sparkles, Users, BookOpen, Trophy, ArrowRight, Play, Zap, Target, Award } from 'lucide-react'
-import Script from 'next/script'
 
 export default function LandingPage() {
   const router = useRouter()
@@ -12,38 +11,7 @@ export default function LandingPage() {
   }
 
   return (
-    <>
-      <Script
-        id="structured-data"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "WebApplication",
-            "name": "FYPQuiz",
-            "description": "Best quiz app for students. Transform your study materials into TikTok-style quiz experiences with AI-generated commentary.",
-            "url": "https://fypquiz.com",
-            "applicationCategory": "EducationalApplication",
-            "operatingSystem": "Web Browser",
-            "offers": {
-              "@type": "Offer",
-              "price": "0",
-              "priceCurrency": "USD"
-            },
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "4.9",
-              "ratingCount": "1000"
-            },
-            "author": {
-              "@type": "Organization",
-              "name": "FYPQuiz"
-            },
-            "keywords": "quiz apps for studying, gen z, college, study tools, quizlet, kahoot, multiple choice, study methods, best study apps"
-          })
-        }}
-      />
-      <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white">
       {/* Navigation */}
       <nav className="absolute top-0 left-0 right-0 z-20 flex justify-between items-center p-6 max-w-7xl mx-auto">
         <div className="flex items-center space-x-2">
@@ -245,6 +213,5 @@ export default function LandingPage() {
         </div>
       </footer>
     </div>
-    </>
   )
 } 
