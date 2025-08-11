@@ -80,7 +80,7 @@ export default function DashboardPage() {
       
       setProcessingStep('Redirecting to quiz...')
       
-      router.push('/quiz')
+              window.open('/quiz', '_blank')
     } catch (error) {
       console.error('Error generating quiz:', error)
       alert('Failed to generate quiz. Please try again.')
