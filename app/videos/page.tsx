@@ -38,7 +38,7 @@ export default function VideosPage() {
       // Store the selected video in session storage
       sessionStorage.setItem('selectedVideo', selectedVideo)
       // Navigate back to quiz creation
-      router.push('/quiz')
+              window.open('/quiz', '_blank')
     }
   }
 
@@ -48,7 +48,7 @@ export default function VideosPage() {
         {/* Header */}
         <div className="flex items-center justify-between p-4">
           <button
-            onClick={() => router.push('/quiz')}
+            onClick={() => window.open('/quiz', '_blank')}
             className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
           >
             <ArrowLeft className="h-5 w-5" />

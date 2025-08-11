@@ -287,6 +287,91 @@ export default function FeedbackPage() {
           </div>
         </form>
       </div>
+
+      {/* Footer with Navigation Links */}
+      <div className="bg-white/5 border-t border-white/20 mt-16">
+        <div className="max-w-4xl mx-auto px-6 py-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
+              <div className="space-y-2">
+                <button
+                  onClick={() => router.push('/dashboard')}
+                  className="block text-gray-300 hover:text-white transition-colors"
+                >
+                  Dashboard
+                </button>
+                <button
+                  onClick={() => window.open('/quiz', '_blank')}
+                  className="block text-gray-300 hover:text-white transition-colors"
+                >
+                  Take Quiz
+                </button>
+                <button
+                  onClick={() => router.push('/collection')}
+                  className="block text-gray-300 hover:text-white transition-colors"
+                >
+                  My Collection
+                </button>
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Learn More</h3>
+              <div className="space-y-2">
+                <button
+                  onClick={() => router.push('/blog')}
+                  className="block text-gray-300 hover:text-white transition-colors"
+                >
+                  Blog
+                </button>
+                <button
+                  onClick={() => router.push('/videos')}
+                  className="block text-gray-300 hover:text-white transition-colors"
+                >
+                  Video Library
+                </button>
+                <a
+                  href="/"
+                  className="block text-gray-300 hover:text-white transition-colors"
+                >
+                  Home
+                </a>
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Support</h3>
+              <div className="space-y-2">
+                <button
+                  onClick={() => router.push('/feedback')}
+                  className="block text-gray-300 hover:text-white transition-colors"
+                >
+                  Submit Feedback
+                </button>
+                <a
+                  href="mailto:support@fypquiz.com"
+                  className="block text-gray-300 hover:text-white transition-colors"
+                >
+                  Contact Support
+                </a>
+                <a
+                  href="/auth"
+                  className="block text-gray-300 hover:text-white transition-colors"
+                >
+                  Sign In
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          <div className="border-t border-white/20 mt-8 pt-8 text-center">
+            <p className="text-gray-400 text-sm">
+              © 2024 FYPQuiz. Helping students focus and learn better.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

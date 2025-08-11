@@ -290,7 +290,7 @@ export default function CollectionPage() {
                         sessionStorage.setItem('savedAudioFiles', JSON.stringify(studySet.audio_files || {}))
                         
                         console.log('Session storage set, navigating to quiz...')
-                        router.push('/quiz')
+                        window.open('/quiz', '_blank')
                       }}
                       onMouseDown={(e) => {
                         console.log('Button mouse down event')
