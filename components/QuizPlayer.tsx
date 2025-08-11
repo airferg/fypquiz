@@ -482,16 +482,7 @@ export default function QuizPlayer({ questions, backgroundVideo, selectedVoice, 
           </div>
         </div>
 
-        {/* Cancel Button */}
-        <div className="absolute top-4 right-4 z-30">
-          <button
-            onClick={handleCancelQuiz}
-            className="p-2 bg-red-500/80 hover:bg-red-600/80 rounded-full transition-colors cursor-pointer"
-            title="Exit Quiz"
-          >
-            <X className="h-5 w-5 text-white" />
-          </button>
-        </div>
+
 
         {/* TikTok-style word-by-word subtitles */}
         {isPlayingAudio && (

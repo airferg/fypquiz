@@ -4,13 +4,14 @@ import { useState, useEffect } from 'react'
 import { useAuth } from '@/components/AuthProvider'
 import FileUploader from '@/components/FileUploader'
 import { useRouter } from 'next/navigation'
-import { BookOpen, Trophy, LogOut, GraduationCap, Menu, X } from 'lucide-react'
+import { BookOpen, Trophy, LogOut, GraduationCap, Menu, X, MessageSquare } from 'lucide-react'
 
 
 export default function DashboardPage() {
   const { user, loading, signOut } = useAuth()
   const router = useRouter()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [showFeedbackPopup, setShowFeedbackPopup] = useState(false)
   
   const [isProcessing, setIsProcessing] = useState(false)
   const [uploadedContent, setUploadedContent] = useState('')
@@ -23,6 +24,17 @@ export default function DashboardPage() {
       router.push('/auth')
     }
   }, [user, loading, router])
+
+  // Show feedback popup after 30 seconds
+  useEffect(() => {
+    if (user && !loading) {
+      const timer = setTimeout(() => {
+        setShowFeedbackPopup(true)
+      }, 30000) // 30 seconds
+      
+      return () => clearTimeout(timer)
+    }
+  }, [user, loading])
 
   const handleFileUpload = async (content: string, name: string) => {
     setUploadedContent(content)
@@ -124,6 +136,13 @@ export default function DashboardPage() {
               <span>Blog</span>
             </button>
             <button
+              onClick={() => router.push('/feedback')}
+              className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-4 py-2 rounded-lg hover:bg-white/20 transition-all flex items-center space-x-2"
+            >
+              <MessageSquare className="h-4 w-4" />
+              <span>Feedback</span>
+            </button>
+            <button
               onClick={() => router.push('/collection')}
               className="bg-accent text-white px-4 py-2 rounded-lg hover:bg-accent/90 transition-all flex items-center space-x-2"
             >
@@ -166,6 +185,7 @@ export default function DashboardPage() {
               </div>
 
               <button onClick={() => { setIsMenuOpen(false); router.push('/blog') }} className="py-3 border-b border-white/10 text-left">Blog</button>
+              <button onClick={() => { setIsMenuOpen(false); router.push('/feedback') }} className="py-3 border-b border-white/10 text-left">Feedback</button>
               <button onClick={() => { setIsMenuOpen(false); router.push('/collection') }} className="py-3 border-b border-white/10 text-left">My Collection</button>
               <button onClick={() => { setIsMenuOpen(false); handleSignOut() }} className="mt-6 bg-white/10 px-4 py-3 rounded-lg text-left">Sign Out</button>
             </div>
@@ -205,6 +225,36 @@ export default function DashboardPage() {
           </div>
         )}
       </div>
+
+      {/* Feedback Popup */}
+      {showFeedbackPopup && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 max-w-md w-full text-center">
+            <MessageSquare className="h-16 w-16 text-accent mx-auto mb-4" />
+            <h3 className="text-2xl font-bold text-white mb-4">Help Us Improve FYPQuiz!</h3>
+            <p className="text-gray-300 mb-6">
+              We'd love to hear your ideas for new features that would help you study better. Your feedback shapes our development roadmap!
+            </p>
+            <div className="flex space-x-4">
+              <button
+                onClick={() => {
+                  setShowFeedbackPopup(false)
+                  router.push('/feedback')
+                }}
+                className="flex-1 bg-accent text-white px-6 py-3 rounded-lg hover:bg-accent/90 transition-all"
+              >
+                Share Feedback
+              </button>
+              <button
+                onClick={() => setShowFeedbackPopup(false)}
+                className="flex-1 bg-white/10 text-white px-6 py-3 rounded-lg hover:bg-white/20 transition-all"
+              >
+                Maybe Later
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 } 

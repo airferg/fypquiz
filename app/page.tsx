@@ -27,6 +27,7 @@ export default function LandingPage() {
             <a href="#features" className="hover:text-accent transition-colors">Features</a>
             <a href="#how-it-works" className="hover:text-accent transition-colors">How it Works</a>
             <a href="/blog" className="hover:text-accent transition-colors">Blog</a>
+            <a href="/feedback" className="hover:text-accent transition-colors">Feedback</a>
             <a
               href="/auth"
               className="bg-accent text-white px-6 py-2 rounded-lg hover:bg-accent/90 transition-all flex items-center space-x-2"
@@ -68,6 +69,7 @@ export default function LandingPage() {
               <a href="#features" className="py-3 border-b border-white/10" onClick={() => setIsMenuOpen(false)}>Features</a>
               <a href="#how-it-works" className="py-3 border-b border-white/10" onClick={() => setIsMenuOpen(false)}>How it Works</a>
               <a href="/blog" className="py-3 border-b border-white/10" onClick={() => setIsMenuOpen(false)}>Blog</a>
+              <a href="/feedback" className="py-3 border-b border-white/10" onClick={() => setIsMenuOpen(false)}>Feedback</a>
               <a
                 href="/auth"
                 className="mt-6 bg-accent text-white px-4 py-3 rounded-lg text-center"

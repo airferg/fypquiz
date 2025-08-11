@@ -15,7 +15,7 @@ const https = require('https');
 const http = require('http');
 
 // Configuration
-const BLOG_SCHEDULE_URL = process.env.BLOG_SCHEDULE_URL || 'https://fypquiz.com/api/blog/schedule';
+const BLOG_SCHEDULE_URL = process.env.BLOG_SCHEDULE_URL || 'http://localhost:3000/api/blog/schedule';
 const LOG_ENABLED = process.env.LOG_ENABLED !== 'false';
 
 function log(message) {

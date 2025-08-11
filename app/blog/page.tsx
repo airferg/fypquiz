@@ -10,8 +10,8 @@ interface BlogPost {
   slug: string
   excerpt: string
   content: string
-  publishedAt: string
-  readTime: number
+  published_at: string
+  read_time: number
   keywords: string[]
   imageUrl?: string
 }
@@ -26,10 +26,17 @@ export default function BlogPage() {
 
   const fetchPosts = async () => {
     try {
+      console.log('Fetching blog posts...')
       const response = await fetch('/api/blog/posts')
+      console.log('Response status:', response.status)
       if (response.ok) {
         const data = await response.json()
-        setPosts(data.posts)
+        console.log('Blog data received:', data)
+        console.log('Posts array:', data.posts)
+        console.log('Posts length:', data.posts?.length)
+        setPosts(data.posts || [])
+      } else {
+        console.error('Response not ok:', response.status)
       }
     } catch (error) {
       console.error('Error fetching posts:', error)
@@ -80,6 +87,7 @@ export default function BlogPage() {
 
       {/* Blog Posts */}
       <div className="max-w-6xl mx-auto px-6 py-12">
+        {console.log('Rendering blog posts section, posts:', posts, 'length:', posts.length)}
         {posts.length === 0 ? (
           <div className="text-center py-16">
             <BookOpen className="h-16 w-16 text-gray-400 mx-auto mb-4" />
@@ -104,11 +112,11 @@ export default function BlogPage() {
                   <div className="flex items-center space-x-4 text-sm text-gray-400 mb-3">
                     <div className="flex items-center space-x-1">
                       <Calendar className="h-4 w-4" />
-                      <span>{formatDate(post.publishedAt)}</span>
+                      <span>{formatDate(post.published_at)}</span>
                     </div>
                     <div className="flex items-center space-x-1">
                       <Clock className="h-4 w-4" />
-                      <span>{post.readTime} min read</span>
+                      <span>{post.read_time} min read</span>
                     </div>
                   </div>
                   

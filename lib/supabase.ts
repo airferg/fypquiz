@@ -23,6 +23,8 @@ if (typeof window !== 'undefined') {
   console.log('Supabase client initialized successfully')
 }
 
+
+
 export { supabase }
 
 export type Database = {

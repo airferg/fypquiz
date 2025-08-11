@@ -88,10 +88,10 @@ function calculateReadTime(content: string): number {
 
 export async function POST() {
   try {
-    const apiKey = process.env.OPENAI_API_KEY
+    const apiKey = process.env.OPEN_AI_API_KEY
     if (!apiKey) {
-      console.error('OPENAI_API_KEY is missing')
-      return NextResponse.json({ error: 'OPENAI_API_KEY is not configured' }, { status: 500 })
+      console.error('OPEN_AI_API_KEY is missing')
+      return NextResponse.json({ error: 'OPEN_AI_API_KEY is not configured' }, { status: 500 })
     }
     const openai = new OpenAI({ apiKey })
 
