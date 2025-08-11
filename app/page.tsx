@@ -51,7 +51,7 @@ export default function LandingPage() {
         {isMenuOpen && (
           <div className="fixed inset-0 z-40 md:hidden">
             <div className="absolute inset-0 bg-black/60" onClick={() => setIsMenuOpen(false)} />
-            <div className="absolute top-0 left-0 h-full w-72 bg-zinc-900 border-r border-white/10 shadow-xl p-6 flex flex-col">
+            <div className="absolute top-0 left-0 h-full w-72 bg-white/20 backdrop-blur-md border-r border-white/30 shadow-xl p-6 flex flex-col">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center space-x-2">
                   <Brain className="h-7 w-7 text-accent" />
@@ -66,10 +66,10 @@ export default function LandingPage() {
                 </button>
               </div>
 
-              <a href="#features" className="py-3 border-b border-white/10" onClick={() => setIsMenuOpen(false)}>Features</a>
-              <a href="#how-it-works" className="py-3 border-b border-white/10" onClick={() => setIsMenuOpen(false)}>How it Works</a>
-              <a href="/blog" className="py-3 border-b border-white/10" onClick={() => setIsMenuOpen(false)}>Blog</a>
-              <a href="/feedback" className="py-3 border-b border-white/10" onClick={() => setIsMenuOpen(false)}>Feedback</a>
+              <a href="#features" className="py-3 border-b border-white/20 text-white hover:text-accent transition-colors" onClick={() => setIsMenuOpen(false)}>Features</a>
+              <a href="#how-it-works" className="py-3 border-b border-white/20 text-white hover:text-accent transition-colors" onClick={() => setIsMenuOpen(false)}>How it Works</a>
+              <a href="/blog" className="py-3 border-b border-white/20 text-white hover:text-accent transition-colors" onClick={() => setIsMenuOpen(false)}>Blog</a>
+              <a href="/feedback" className="py-3 border-b border-white/20 text-white hover:text-accent transition-colors" onClick={() => setIsMenuOpen(false)}>Feedback</a>
               <a
                 href="/auth"
                 className="mt-6 bg-accent text-white px-4 py-3 rounded-lg text-center"

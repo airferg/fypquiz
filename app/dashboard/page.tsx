@@ -172,7 +172,7 @@ export default function DashboardPage() {
         {isMenuOpen && (
           <div className="fixed inset-0 z-40 md:hidden">
             <div className="absolute inset-0 bg-black/60" onClick={() => setIsMenuOpen(false)} />
-            <div className="absolute top-0 right-0 h-full w-72 bg-zinc-900 border-l border-white/10 shadow-xl p-6 flex flex-col">
+            <div className="absolute top-0 right-0 h-full w-72 bg-white/20 backdrop-blur-md border-l border-white/30 shadow-xl p-6 flex flex-col">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold">Menu</h2>
                 <button
@@ -184,10 +184,10 @@ export default function DashboardPage() {
                 </button>
               </div>
 
-              <button onClick={() => { setIsMenuOpen(false); router.push('/blog') }} className="py-3 border-b border-white/10 text-left">Blog</button>
-              <button onClick={() => { setIsMenuOpen(false); router.push('/feedback') }} className="py-3 border-b border-white/10 text-left">Feedback</button>
-              <button onClick={() => { setIsMenuOpen(false); router.push('/collection') }} className="py-3 border-b border-white/10 text-left">My Collection</button>
-              <button onClick={() => { setIsMenuOpen(false); handleSignOut() }} className="mt-6 bg-white/10 px-4 py-3 rounded-lg text-left">Sign Out</button>
+              <button onClick={() => { setIsMenuOpen(false); router.push('/blog') }} className="py-3 border-b border-white/20 text-left text-white hover:text-accent transition-colors">Blog</button>
+              <button onClick={() => { setIsMenuOpen(false); router.push('/feedback') }} className="py-3 border-b border-white/20 text-left text-white hover:text-accent transition-colors">Feedback</button>
+              <button onClick={() => { setIsMenuOpen(false); router.push('/collection') }} className="py-3 border-b border-white/20 text-left text-white hover:text-accent transition-colors">My Collection</button>
+              <button onClick={() => { setIsMenuOpen(false); handleSignOut() }} className="mt-6 bg-white/20 px-4 py-3 rounded-lg text-left text-white hover:bg-white/30 transition-all">Sign Out</button>
             </div>
           </div>
         )}
