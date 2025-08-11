@@ -340,8 +340,8 @@ export default function QuizPlayer({ questions, backgroundVideo, selectedVoice, 
     // Stop any currently playing audio
     stopCurrentAudio()
     
-    // Check if we have audio for this question
-    if (audioUrls.length > 0 && audioUrls[currentQuestionIndex] && audioUrls[currentQuestionIndex] !== '') {
+    // Check if we have audio for this question and haven't already played it
+    if (audioUrls.length > 0 && audioUrls[currentQuestionIndex] && audioUrls[currentQuestionIndex] !== '' && lastPlayedQuestionRef.current !== currentQuestionIndex) {
       console.log(`🎵 Playing audio for question ${currentQuestionIndex + 1}`);
       setTimeout(() => {
         playQuestionAudio()
@@ -356,7 +356,7 @@ export default function QuizPlayer({ questions, backgroundVideo, selectedVoice, 
     }
     
     lastPlayedQuestionRef.current = currentQuestionIndex;
-  }, [currentQuestionIndex, isLoading, audioUrls])
+  }, [currentQuestionIndex, isLoading])
 
   // Cleanup audio when component unmounts
   useEffect(() => {
@@ -467,7 +467,7 @@ export default function QuizPlayer({ questions, backgroundVideo, selectedVoice, 
         {/* Progress Bar */}
         <div className="absolute top-0 left-0 right-0 z-20">
           <div className="max-w-md mx-auto">
-            <div className="bg-white/20 backdrop-blur-sm p-2 mx-4 mt-4 rounded-lg">
+            <div className="bg-white/20 backdrop-blur-sm p-2 mx-8 mt-9 rounded-t-xl">
               <div className="flex justify-between items-center text-white text-sm">
                 <span>Question {currentQuestionIndex + 1} of {questions.length}</span>
                 <span>Score: {score}</span>
@@ -506,21 +506,7 @@ export default function QuizPlayer({ questions, backgroundVideo, selectedVoice, 
                 </div>
               </div>
               
-              {/* Skip button */}
-              <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-                <button
-                  onClick={() => {
-                    stopCurrentAudio()
-                    // 1-second delay before showing answers (same as audio end)
-                    setTimeout(() => {
-                      setShowAnswers(true)
-                    }, 1000)
-                  }}
-                  className="px-4 py-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-all text-sm backdrop-blur-sm"
-                >
-                  Skip Audio
-                </button>
-              </div>
+
             </div>
           </div>
         )}

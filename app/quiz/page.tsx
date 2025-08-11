@@ -634,6 +634,16 @@ export default function QuizPage() {
             }
           </button>
         </div>
+        
+        {/* Hidden SEO Links - Fix orphan page issue */}
+        <div className="sr-only">
+          <a href="/dashboard">Dashboard</a>
+          <a href="/collection">My Collection</a>
+          <a href="/videos">Video Library</a>
+          <a href="/blog">Blog</a>
+          <a href="/feedback">Feedback</a>
+          <a href="/">Home</a>
+        </div>
       </div>
     </div>
   )
