@@ -26,17 +26,10 @@ export default function BlogPage() {
 
   const fetchPosts = async () => {
     try {
-      console.log('Fetching blog posts...')
       const response = await fetch('/api/blog/posts')
-      console.log('Response status:', response.status)
       if (response.ok) {
         const data = await response.json()
-        console.log('Blog data received:', data)
-        console.log('Posts array:', data.posts)
-        console.log('Posts length:', data.posts?.length)
         setPosts(data.posts || [])
-      } else {
-        console.error('Response not ok:', response.status)
       }
     } catch (error) {
       console.error('Error fetching posts:', error)
@@ -87,7 +80,6 @@ export default function BlogPage() {
 
       {/* Blog Posts */}
       <div className="max-w-6xl mx-auto px-6 py-12">
-        {console.log('Rendering blog posts section, posts:', posts, 'length:', posts.length)}
         {posts.length === 0 ? (
           <div className="text-center py-16">
             <BookOpen className="h-16 w-16 text-gray-400 mx-auto mb-4" />
