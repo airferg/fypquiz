@@ -27,9 +27,22 @@ export default function FeedbackPage() {
     setIsSubmitting(true)
 
     try {
-      // Here you would typically send the data to your backend
-      // For now, we'll just simulate a successful submission
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      // Submit feedback to the API
+      const response = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to submit feedback')
+      }
+
+      const result = await response.json()
+      console.log('Feedback submitted successfully:', result)
       
       setIsSubmitted(true)
       // Reset form after 3 seconds
@@ -47,6 +60,7 @@ export default function FeedbackPage() {
       }, 3000)
     } catch (error) {
       console.error('Error submitting feedback:', error)
+      alert('Failed to submit feedback. Please try again.')
     } finally {
       setIsSubmitting(false)
     }
