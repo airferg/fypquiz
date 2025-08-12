@@ -23,7 +23,19 @@ export default function FileUploader({ onFileUpload, isLoading = false }: FileUp
     const file = acceptedFiles[0]
     
     try {
-      console.log('Processing file:', file.name, 'Type:', file.type, 'Size:', file.size)
+      // Enhanced mobile debugging
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+      console.log('=== FILE UPLOAD DEBUG ===')
+      console.log('Device type:', isMobile ? 'Mobile' : 'Desktop')
+      console.log('User agent:', navigator.userAgent)
+      console.log('File details:', {
+        name: file.name,
+        type: file.type,
+        size: file.size,
+        sizeMB: (file.size / (1024 * 1024)).toFixed(2) + 'MB'
+      })
+      console.log('File object:', file)
+      
       setProcessingStatus('Extracting text from file...')
       
       const content = await extractTextFromFile(file)
@@ -38,19 +50,32 @@ export default function FileUploader({ onFileUpload, isLoading = false }: FileUp
       setProcessingStatus('Generating quiz questions...')
       onFileUpload(content, file.name)
     } catch (err) {
-      console.error('File processing error:', err)
+      console.error('=== FILE PROCESSING ERROR ===')
+      console.error('Error details:', err)
+      console.error('Error type:', typeof err)
+      console.error('Error message:', err instanceof Error ? err.message : 'No message')
+      console.error('Error stack:', err instanceof Error ? err.stack : 'No stack')
+      
       const errorMessage = err instanceof Error ? err.message : 'Failed to read file'
       
-      // Provide more helpful error messages
+      // Enhanced error messages for mobile debugging
+      let userFriendlyError = errorMessage
+      
       if (errorMessage.includes('PDF')) {
-        setError('PDF processing failed. This might be an image-based PDF. Try converting it to text or uploading a different file.')
+        userFriendlyError = 'PDF processing failed. This might be an image-based PDF. Try converting it to text or uploading a different file.'
       } else if (errorMessage.includes('DOCX')) {
-        setError('DOCX processing failed. Try saving the file as a different format or uploading a text file.')
+        userFriendlyError = 'DOCX processing failed. Try saving the file as a different format or uploading a text file.'
       } else if (errorMessage.includes('video') || errorMessage.includes('Video')) {
-        setError(errorMessage)
-      } else {
-        setError(errorMessage)
+        userFriendlyError = errorMessage
+      } else if (errorMessage.includes('timeout')) {
+        userFriendlyError = 'Request timed out. Please check your internet connection and try again.'
+      } else if (errorMessage.includes('network')) {
+        userFriendlyError = 'Network error. Please check your internet connection and try again.'
+      } else if (file.size > 100 * 1024 * 1024) { // 100MB
+        userFriendlyError = 'File is too large for mobile processing. Try a smaller file or use desktop.'
       }
+      
+      setError(userFriendlyError)
     }
   }, [onFileUpload])
 
@@ -65,7 +90,18 @@ export default function FileUploader({ onFileUpload, isLoading = false }: FileUp
       'video/x-msvideo': ['.avi']
     },
     multiple: false,
-    disabled: isLoading
+    disabled: isLoading,
+    maxSize: 100 * 1024 * 1024, // 100MB limit for mobile compatibility
+    onDropRejected: (rejectedFiles) => {
+      const file = rejectedFiles[0]
+      if (file.errors.some(e => e.code === 'file-too-large')) {
+        setError('File is too large. Maximum size is 100MB for mobile devices.')
+      } else if (file.errors.some(e => e.code === 'file-invalid-type')) {
+        setError('File type not supported. Please upload PDF, DOCX, TXT, or video files.')
+      } else {
+        setError('File upload failed. Please try again.')
+      }
+    }
   })
 
   return (
@@ -102,6 +138,9 @@ export default function FileUploader({ onFileUpload, isLoading = false }: FileUp
             <p className="text-sm text-gray-300 mt-2">
               Supports PDF, DOCX, TXT, and video files (MP4, MOV, AVI)
             </p>
+            <p className="text-xs text-gray-500 mt-1">
+              Mobile: Max 100MB • Desktop: Max 200MB
+            </p>
             {processingStatus && (
               <p className="text-sm text-accent mt-2">{processingStatus}</p>
             )}
@@ -130,6 +169,8 @@ export default function FileUploader({ onFileUpload, isLoading = false }: FileUp
           <li>• Plain text files work best</li>
           <li>• Videos should have clear speech audio (max 10 minutes)</li>
           <li>• Video files must be under 200MB</li>
+          <li>• Mobile devices: Use smaller files (under 100MB) for best performance</li>
+          <li>• Check your internet connection - mobile networks may be slower</li>
         </ul>
       </div>
     </div>
