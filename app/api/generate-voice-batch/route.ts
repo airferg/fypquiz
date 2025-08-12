@@ -70,7 +70,8 @@ export async function POST(request: NextRequest) {
         }
 
         const audioBuffer = await response.arrayBuffer()
-        const base64Audio = btoa(String.fromCharCode(...new Uint8Array(audioBuffer)))
+        const uint8Array = new Uint8Array(audioBuffer)
+        const base64Audio = btoa(String.fromCharCode.apply(null, Array.from(uint8Array)))
         
         audioResults.push({
           index: question.index,
