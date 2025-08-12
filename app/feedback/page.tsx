@@ -302,8 +302,8 @@ export default function FeedbackPage() {
                   Dashboard
                 </button>
                 <button
-                  onClick={() => window.open('/quiz', '_blank')}
-                  className="block text-gray-300 hover:text-white transition-colors"
+                  onClick={() => router.push('/quiz')}
+                  className="block text-white hover:text-accent transition-colors"
                 >
                   Take Quiz
                 </button>

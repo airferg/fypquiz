@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/components/AuthProvider'
 import QuizPlayer from '@/components/QuizPlayer'
-import { ArrowLeft, Trophy, Home } from 'lucide-react'
+import { ArrowLeft, Trophy, Home, X, Check } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 
 
@@ -113,6 +113,7 @@ export default function QuizPage() {
   const [voiceSearchTerm, setVoiceSearchTerm] = useState('')
   const [selectedVoiceCategory, setSelectedVoiceCategory] = useState<string>('all')
   const [isStartingQuiz, setIsStartingQuiz] = useState(false)
+  const [showVideoPopup, setShowVideoPopup] = useState(false)
 
   useEffect(() => {
     // Only run on client side
@@ -595,7 +596,7 @@ export default function QuizPage() {
                   <p className="text-sm text-gray-300">Background video for your quiz</p>
                 </div>
                 <button
-                  onClick={() => router.push('/videos')}
+                  onClick={() => setShowVideoPopup(true)}
                   className="px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/90"
                 >
                   Change Video
@@ -605,7 +606,7 @@ export default function QuizPage() {
               <div className="text-center">
                 <p className="text-gray-300 mb-4">No video selected yet</p>
                 <button
-                  onClick={() => router.push('/videos')}
+                  onClick={() => setShowVideoPopup(true)}
                   className="px-6 py-3 bg-accent text-white rounded-lg hover:bg-accent/90"
                 >
                   Choose Video
@@ -645,6 +646,81 @@ export default function QuizPage() {
           <a href="/">Home</a>
         </div>
       </div>
+      
+      {/* Video Selection Popup */}
+      {showVideoPopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            onClick={() => setShowVideoPopup(false)}
+          />
+          
+          {/* Popup Content - Exact same as /videos page */}
+          <div className="relative bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-4">
+              <h1 className="text-xl font-bold text-gray-900">Choose Video</h1>
+              <button
+                onClick={() => setShowVideoPopup(false)}
+                className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
+              >
+                <X className="h-5 w-5 text-gray-600" />
+              </button>
+            </div>
+
+            {/* Video Feed - Exact same as /videos page */}
+            <div className="space-y-4 pb-4">
+              {[
+                // Minecraft
+                { label: 'Minecraft_video1', src: '/videos/Minecraft_video1.mp4' },
+                { label: 'Minecraft_video2', src: '/videos/Minecraft_video2.mp4' },
+                { label: 'Minecraft_video3', src: '/videos/Minecraft_video3.mp4' },
+                { label: 'Minecraft_video4', src: '/videos/Minecraft_video4.mp4' },
+                { label: 'Minecraft_video5', src: '/videos/Minecraft_video5.mp4' },
+                { label: 'Minecraft_video6', src: '/videos/Minecraft_video6.mp4' },
+                // Spiderman
+                { label: 'Spiderman_video1', src: '/videos/Spiderman_video1.mp4' },
+                { label: 'Spiderman_video2', src: '/videos/Spiderman_video2.mp4' },
+                { label: 'Spiderman_video3', src: '/videos/Spiderman_video3.mp4' },
+                { label: 'Spiderman_video4', src: '/videos/Spiderman_video4.mp4' },
+                // GTA
+                { label: 'GTA_video1', src: '/videos/gta-video1.mp4' },
+              ].map((video) => (
+                <div 
+                  key={video.label} 
+                  className={`
+                    relative w-full max-w-sm mx-auto cursor-pointer transition-all
+                    ${selectedVideo === video.label 
+                      ? 'ring-2 ring-accent' 
+                      : ''
+                    }
+                  `}
+                  onClick={() => {
+                    setSelectedVideo(video.label)
+                    sessionStorage.setItem('selectedVideo', video.label)
+                    setShowVideoPopup(false)
+                  }}
+                >
+                  <video
+                    src={video.src}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className="w-full aspect-[9/16] rounded-lg bg-black object-cover"
+                  />
+                  {selectedVideo === video.label && (
+                    <div className="absolute top-4 right-4 bg-accent text-white rounded-full p-2">
+                      <Check className="h-5 w-5" />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 } 

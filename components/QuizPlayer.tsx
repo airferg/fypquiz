@@ -55,11 +55,13 @@ export default function QuizPlayer({ questions, backgroundVideo, selectedVoice, 
 
   // Play audio for current question with real-time subtitles
   const playQuestionAudio = () => {
-    console.log('playQuestionAudio called');
+    console.log('🎵 === playQuestionAudio called ===');
     console.log('audioUrls:', audioUrls);
     console.log('currentQuestionIndex:', currentQuestionIndex);
     console.log('audioUrls[currentQuestionIndex]:', audioUrls[currentQuestionIndex]);
     console.log('isPlayingAudio:', isPlayingAudio);
+    console.log('audioUrls length:', audioUrls.length);
+    console.log('Full audioUrls array:', audioUrls);
     
     if (audioUrls[currentQuestionIndex] && !isPlayingAudio) {
       console.log('Creating audio element');
@@ -273,60 +275,166 @@ export default function QuizPlayer({ questions, backgroundVideo, selectedVoice, 
       return
     }
 
-    // Generate audio in parallel with progress tracking
-    const generateAudioParallel = async () => {
+    // Generate audio using batch API to avoid concurrent request limits
+    const generateAudioBatch = async () => {
       try {
-        console.log('🔄 Generating audio in parallel...');
-        console.log('Selected voice:', selectedVoice);
-        console.log('Number of questions:', questions.length);
+        console.log('🔄 Generating audio using batch API...');
         
-        // Start with first 3 questions immediately, then lazy load the rest
-        const initialBatch = Math.min(3, questions.length);
-        const remainingQuestions = questions.slice(initialBatch);
+        // Prepare questions for batch processing
+        const batchQuestions = questions.map((question, index) => ({
+          text: question.question,
+          index: index
+        }));
         
-        // Generate first batch in parallel
-        const initialPromises = questions.slice(0, initialBatch).map((question, index) =>
-          generateSingleAudio(question.question, index)
-        );
+        console.log(`📦 Sending ${batchQuestions.length} questions to batch API`);
         
-        const initialResults = await Promise.all(initialPromises);
-        console.log('Initial audio results:', initialResults);
-        setAudioUrls(initialResults);
-        setAudioProgress(initialBatch);
+        const response = await fetch('/api/generate-voice-batch', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            questions: batchQuestions,
+            voiceId: selectedVoice,
+          }),
+        });
         
-        // If we have more questions, generate them in the background
-        if (remainingQuestions.length > 0) {
-          const remainingPromises = remainingQuestions.map((question, index) =>
-            generateSingleAudio(question.question, initialBatch + index)
-          );
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('❌ Batch voice API error:', errorText);
+          throw new Error(`Batch voice generation failed: ${errorText}`);
+        }
+        
+        const batchResult = await response.json();
+        console.log('📦 Batch voice generation result:', batchResult);
+        
+        if (!batchResult.success) {
+          throw new Error('Batch voice generation failed');
+        }
+        
+        // Process results and create audio URLs
+        const allAudioUrls = new Array(questions.length).fill('');
+        
+        batchResult.results.forEach((result: any) => {
+          if (result.success && result.audio) {
+            // Convert base64 to blob URL
+            const audioBlob = new Blob([
+              Uint8Array.from(atob(result.audio), c => c.charCodeAt(0))
+            ], { type: 'audio/mpeg' });
+            
+            const audioUrl = URL.createObjectURL(audioBlob);
+            allAudioUrls[result.index] = audioUrl;
+            
+            console.log(`✅ Audio URL created for question ${result.index + 1}: ${audioUrl}`);
+            console.log(`📊 Blob size: ${audioBlob.size} bytes`);
+            console.log(`🔗 URL type: ${typeof audioUrl}`);
+          } else {
+            console.warn(`⚠️ Voice generation failed for question ${result.index + 1}:`, result.error);
+          }
+        });
+        
+        console.log('🎉 Batch audio generation complete!');
+        console.log('Final audioUrls:', allAudioUrls);
+        console.log('📝 Setting audioUrls state with:', allAudioUrls.length, 'items');
+        console.log('📝 First item:', allAudioUrls[0]);
+        console.log('📝 First item type:', typeof allAudioUrls[0]);
+        console.log('📝 First item truthy:', !!allAudioUrls[0]);
+        
+        setAudioUrls(allAudioUrls);
+        setAudioProgress(questions.length);
+        setIsLoading(false);
+        setHasGeneratedAudio(true);
+        
+        // If this is the first question and we're already on it, trigger audio playback
+        console.log('🔍 First question audio check:');
+        console.log('currentQuestionIndex:', currentQuestionIndex);
+        console.log('allAudioUrls[0]:', allAudioUrls[0]);
+        console.log('allAudioUrls[0] !== "":', allAudioUrls[0] !== '');
+        console.log('allAudioUrls[0] truthy:', !!allAudioUrls[0]);
+        console.log('Full allAudioUrls array:', allAudioUrls);
+        
+        if (currentQuestionIndex === 0 && allAudioUrls[0] && allAudioUrls[0] !== '') {
+          console.log('🎵 First question audio ready, triggering playback...');
+          setTimeout(() => {
+            playQuestionAudio();
+          }, 100);
+        } else {
+          console.log('⚠️ First question audio NOT ready or invalid');
+        }
+        
+      } catch (error) {
+        console.error('❌ Error in batch audio generation:', error);
+        console.log('🔄 Falling back to individual voice generation...');
+        
+        // Fallback to individual generation if batch fails
+        await generateAudioSequentially();
+      }
+    };
+    
+    // Fallback: Generate audio sequentially (original method)
+    const generateAudioSequentially = async () => {
+      try {
+        console.log('🔄 Generating audio sequentially as fallback...');
+        
+        const allAudioUrls = [];
+        
+        // Generate audio for each question one at a time
+        for (let i = 0; i < questions.length; i++) {
+          console.log(`🎵 Generating voice for question ${i + 1}/${questions.length}`);
           
-          // Process remaining questions in batches of 2 for better performance
-          for (let i = 0; i < remainingPromises.length; i += 2) {
-            const batch = remainingPromises.slice(i, i + 2);
-            const batchResults = await Promise.all(batch);
-            
-            setAudioUrls(prev => [...prev, ...batchResults]);
-            setAudioProgress(initialBatch + i + batch.length);
-            
-            // Small delay to prevent overwhelming the API
-            await new Promise(resolve => setTimeout(resolve, 100));
+          const audioUrl = await generateSingleAudio(questions[i].question, i);
+          allAudioUrls.push(audioUrl);
+          
+          // Update progress after each question
+          setAudioUrls([...allAudioUrls]);
+          setAudioProgress(i + 1);
+          
+          // Add delay between requests to prevent overwhelming the API
+          if (i < questions.length - 1) {
+            console.log(`⏳ Waiting 500ms before next request...`);
+            await new Promise(resolve => setTimeout(resolve, 500));
           }
         }
         
+        console.log('🎉 All audio generated sequentially!');
+        console.log('Final audioUrls:', allAudioUrls);
+        
         setIsLoading(false);
         setHasGeneratedAudio(true);
-        console.log('🎉 All audio generated!');
-        console.log('Final audioUrls:', audioUrls);
+        
+        // If this is the first question and we're already on it, trigger audio playback
+        console.log('🔍 First question audio check (sequential):');
+        console.log('currentQuestionIndex:', currentQuestionIndex);
+        console.log('allAudioUrls[0]:', allAudioUrls[0]);
+        console.log('allAudioUrls[0] !== "":', allAudioUrls[0] !== '');
+        console.log('allAudioUrls[0] truthy:', !!allAudioUrls[0]);
+        console.log('Full allAudioUrls array:', allAudioUrls);
+        
+        if (currentQuestionIndex === 0 && allAudioUrls[0] && allAudioUrls[0] !== '') {
+          console.log('🎵 First question audio ready (sequential), triggering playback...');
+          setTimeout(() => {
+            playQuestionAudio();
+          }, 100);
+        } else {
+          console.log('⚠️ First question audio NOT ready or invalid (sequential)');
+        }
       } catch (error) {
         console.error('❌ Error generating audio:', error);
         setIsLoading(false);
       }
     };
 
-    generateAudioParallel();
+    generateAudioBatch();
   }, [questions, selectedVoice])
 
   useEffect(() => {
+    console.log('=== Question Change Effect ===');
+    console.log('isLoading:', isLoading);
+    console.log('currentQuestionIndex:', currentQuestionIndex);
+    console.log('audioUrls length:', audioUrls.length);
+    console.log('audioUrls:', audioUrls);
+    console.log('isPlayingAudio:', isPlayingAudio);
+    
     if (isLoading) return
 
     // Reset states for new question
@@ -337,21 +445,38 @@ export default function QuizPlayer({ questions, backgroundVideo, selectedVoice, 
     setCurrentSubtitle('')
     setVisibleWords([])
     
-    // Stop any currently playing audio
-    stopCurrentAudio()
+    // Only stop audio if we're not currently playing audio for this question
+    if (!isPlayingAudio || lastPlayedQuestionRef.current !== currentQuestionIndex) {
+      console.log('🛑 Stopping current audio (not playing or different question)');
+      stopCurrentAudio()
+    } else {
+      console.log('🎵 Audio is currently playing for this question, not stopping');
+    }
     
     // Check if we have audio for this question and haven't already played it
+    console.log('🔍 Audio playback check:');
+    console.log('audioUrls.length > 0:', audioUrls.length > 0);
+    console.log('audioUrls[currentQuestionIndex]:', audioUrls[currentQuestionIndex]);
+    console.log('audioUrls[currentQuestionIndex] !== "":', audioUrls[currentQuestionIndex] !== '');
+    console.log('lastPlayedQuestionRef.current !== currentQuestionIndex:', lastPlayedQuestionRef.current !== currentQuestionIndex);
+    
     if (audioUrls.length > 0 && audioUrls[currentQuestionIndex] && audioUrls[currentQuestionIndex] !== '' && lastPlayedQuestionRef.current !== currentQuestionIndex) {
       console.log(`🎵 Playing audio for question ${currentQuestionIndex + 1}`);
+      console.log(`Audio URL: ${audioUrls[currentQuestionIndex]}`);
       setTimeout(() => {
+        console.log('⏰ Timeout finished, calling playQuestionAudio...');
         playQuestionAudio()
       }, 500)
+    } else if (isPlayingAudio && lastPlayedQuestionRef.current === currentQuestionIndex) {
+      // Audio is currently playing for this question, don't show answers yet
+      console.log('🎵 Audio is currently playing, waiting for it to finish...');
     } else {
       // If no audio, show answers immediately
-      console.log('No audio available, showing answers immediately');
+      console.log('❌ No audio available, showing answers immediately');
       console.log('audioUrls length:', audioUrls.length);
       console.log('currentQuestionIndex:', currentQuestionIndex);
       console.log('audioUrls[currentQuestionIndex]:', audioUrls[currentQuestionIndex]);
+      console.log('Full audioUrls array:', audioUrls);
       setShowAnswers(true)
     }
     
@@ -481,6 +606,8 @@ export default function QuizPlayer({ questions, backgroundVideo, selectedVoice, 
             </div>
           </div>
         </div>
+        
+
 
 
 

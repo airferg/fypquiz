@@ -37,6 +37,15 @@ export default function DashboardPage() {
   }, [user, loading])
 
   const handleFileUpload = async (content: string, name: string) => {
+    // Enhanced logging for mobile debugging
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    console.log('=== QUIZ GENERATION DEBUG ===')
+    console.log('Device type:', isMobile ? 'Mobile' : 'Desktop')
+    console.log('User agent:', navigator.userAgent)
+    console.log('File name:', name)
+    console.log('Content length:', content.length)
+    console.log('Content preview:', content.substring(0, 200) + '...')
+    
     setUploadedContent(content)
     setFileName(name)
     setIsProcessing(true)
@@ -52,26 +61,38 @@ export default function DashboardPage() {
 
     try {
       setProcessingStep('Generating quiz questions with AI...')
+      console.log('Starting quiz generation API call...')
+      
+      const requestBody = {
+        content,
+        fileName: name,
+        questionCount: 10, // Default to 10 questions for initial generation
+      }
+      console.log('Request body:', requestBody)
       
       const response = await fetch('/api/generate-quiz', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          content,
-          fileName: name,
-          questionCount: 10, // Default to 10 questions for initial generation
-        }),
+        body: JSON.stringify(requestBody),
       })
 
+      console.log('API response status:', response.status)
+      console.log('API response headers:', Object.fromEntries(response.headers.entries()))
+
       if (!response.ok) {
-        throw new Error('Failed to generate quiz')
+        const errorText = await response.text()
+        console.error('API error response:', errorText)
+        throw new Error(`Failed to generate quiz: ${response.status} - ${errorText}`)
       }
 
       setProcessingStep('Finalizing your quiz...')
+      console.log('Parsing quiz data...')
       
       const quizData = await response.json()
+      console.log('Quiz data received:', quizData)
+      console.log('Quiz questions count:', quizData.questions?.length)
       
       // Store in session storage for quiz page
       sessionStorage.setItem('quizData', JSON.stringify(quizData))
@@ -79,12 +100,32 @@ export default function DashboardPage() {
       sessionStorage.setItem('uploadedContent', content)
       
       setProcessingStep('Redirecting to quiz...')
+      console.log('Redirecting to quiz page...')
       
-              window.open('/quiz', '_blank')
+      // Redirect to quiz page
+      router.push('/quiz')
     } catch (error) {
-      console.error('Error generating quiz:', error)
-      alert('Failed to generate quiz. Please try again.')
+      console.error('=== QUIZ GENERATION ERROR ===')
+      console.error('Error details:', error)
+      console.error('Error type:', typeof error)
+      console.error('Error message:', error instanceof Error ? error.message : 'No message')
+      console.error('Error stack:', error instanceof Error ? error.stack : 'No stack')
+      
+      // Enhanced error handling for mobile
+      let errorMessage = 'Failed to generate quiz. Please try again.'
+      if (error instanceof Error) {
+        if (error.message.includes('timeout')) {
+          errorMessage = 'Request timed out. Please check your internet connection and try again.'
+        } else if (error.message.includes('network')) {
+          errorMessage = 'Network error. Please check your internet connection and try again.'
+        } else if (error.message.includes('Failed to generate quiz')) {
+          errorMessage = 'Quiz generation failed. The content might be too short or unreadable.'
+        }
+      }
+      
+      alert(errorMessage)
     } finally {
+      console.log('Cleaning up processing state...')
       setIsProcessing(false)
       setProcessingStep('')
     }

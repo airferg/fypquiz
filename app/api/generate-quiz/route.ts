@@ -17,9 +17,21 @@ const createTimeout = (ms: number) => new Promise((_, reject) =>
 
 export async function POST(request: NextRequest) {
   try {
-    const { content, fileName, questionCount = 10 } = await request.json()
+    console.log('=== QUIZ GENERATION API CALLED ===')
+    console.log('Request headers:', Object.fromEntries(request.headers.entries()))
+    
+    const body = await request.json()
+    console.log('Request body received:', {
+      hasContent: !!body.content,
+      contentLength: body.content?.length,
+      fileName: body.fileName,
+      questionCount: body.questionCount
+    })
+    
+    const { content, fileName, questionCount = 10 } = body
 
     if (!content || !fileName) {
+      console.error('Missing required fields:', { content: !!content, fileName: !!fileName })
       return NextResponse.json(
         { error: 'Content and fileName are required' },
         { status: 400 }
@@ -61,6 +73,11 @@ export async function POST(request: NextRequest) {
     const truncatedContent = content.length > 2000 ? content.substring(0, 2000) + '...' : content
 
     // Generate quiz using OpenAI with timeout
+    console.log('Calling OpenAI API...')
+    console.log('Model: gpt-4o')
+    console.log('Content length being sent:', truncatedContent.length)
+    console.log('Max tokens:', Math.min(2000, validatedQuestionCount * 150))
+    
     const completionPromise = openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
@@ -89,13 +106,16 @@ export async function POST(request: NextRequest) {
     })
 
     // Add 60-second timeout
+    console.log('Waiting for OpenAI response with 60s timeout...')
     const completion = await Promise.race([
       completionPromise,
       createTimeout(60000) // 60 seconds timeout
     ]) as OpenAI.Chat.Completions.ChatCompletion
 
+    console.log('OpenAI response received successfully!')
     const responseText = completion.choices[0]?.message?.content
     if (!responseText) {
+      console.error('No response content from OpenAI')
       throw new Error('No response from OpenAI')
     }
 
@@ -167,6 +187,11 @@ export async function POST(request: NextRequest) {
       })
       
       console.log('Successfully generated quiz with', quizData.questions.length, 'questions')
+      console.log('Quiz data structure:', {
+        hasTitle: !!quizData.title,
+        questionsCount: quizData.questions?.length,
+        firstQuestion: quizData.questions?.[0]?.question?.substring(0, 50) + '...'
+      })
       
     } catch (error) {
       console.error('Failed to parse OpenAI response:', error)
@@ -185,6 +210,8 @@ export async function POST(request: NextRequest) {
       console.log('Using fallback quiz due to parsing error')
     }
 
+    console.log('=== QUIZ GENERATION COMPLETE ===')
+    console.log('Returning quiz data to client...')
     return NextResponse.json(quizData)
   } catch (error) {
     console.error('Error generating quiz:', error)
