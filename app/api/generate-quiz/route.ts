@@ -83,7 +83,28 @@ export async function POST(request: NextRequest) {
       messages: [
         {
           role: "system",
-          content: `Generate exactly ${validatedQuestionCount} multiple choice questions based on the provided content. Each question should have 4 choices (A, B, C, D) with one correct answer. Make questions specific to the content, not generic. Return as JSON:
+          content: `You are an expert quiz creator. Generate exactly ${validatedQuestionCount} multiple choice questions based on the provided content.
+
+CRITICAL RULES:
+1. ONLY ask questions about the ACTUAL SUBJECT MATTER being taught in the content
+2. NEVER ask meta-questions about the course, author, or course structure
+3. NEVER ask "Who is the author of this course?" or "What is the focus of [author]'s research mentioned in the course content?"
+4. Focus on concepts, theories, methods, processes, and factual information being taught
+5. Use your knowledge to create relevant questions about the business/marketing/technical concepts covered
+
+EXAMPLES OF GOOD QUESTIONS:
+- "What are the stages of the adoption curve?"
+- "What is the difference between incremental and disruptive innovation?"
+- "How do you calculate customer lifetime value?"
+- "What are the key components of market segmentation?"
+
+EXAMPLES OF BAD QUESTIONS (NEVER ASK THESE):
+- "Who is the author of this course?"
+- "What does the course say about..."
+- "What is mentioned in the notes about..."
+- "What is the focus of [author]'s research mentioned in the course content?"
+
+Each question should have 4 choices (A, B, C, D) with one correct answer. Return as JSON:
 {
   "title": "Quiz title",
   "questions": [
@@ -145,7 +166,41 @@ export async function POST(request: NextRequest) {
         throw new Error('Invalid quiz structure')
       }
       
-      // Ensure we have the right number of questions
+      // Filter out meta-questions and validate question quality
+      const originalCount = quizData.questions.length
+      quizData.questions = quizData.questions.filter((question: any) => {
+        const questionText = question.question.toLowerCase()
+        
+        // List of forbidden patterns that indicate meta-questions
+        const forbiddenPatterns = [
+          'who is the author',
+          'what is the focus of',
+          'mentioned in the course',
+          'what does the course say',
+          'what is mentioned in the notes',
+          'the course content',
+          'the course',
+          'course author',
+          'course structure',
+          'course notes'
+        ]
+        
+        // Check if question contains any forbidden patterns
+        const hasForbiddenPattern = forbiddenPatterns.some(pattern => 
+          questionText.includes(pattern)
+        )
+        
+        if (hasForbiddenPattern) {
+          console.log(`🚫 Filtered out meta-question: ${question.question}`)
+          return false
+        }
+        
+        return true
+      })
+      
+      console.log(`🔍 Filtered ${originalCount - quizData.questions.length} meta-questions`)
+      
+      // Ensure we have the right number of questions after filtering
       if (quizData.questions.length !== validatedQuestionCount) {
         // Truncate or extend to match requested count
         if (quizData.questions.length > validatedQuestionCount) {
@@ -153,6 +208,7 @@ export async function POST(request: NextRequest) {
         } else {
           // Add generic questions if we don't have enough
           const missingCount = validatedQuestionCount - quizData.questions.length
+          console.log(`🔄 Adding ${missingCount} replacement questions after filtering meta-questions`)
           for (let i = 0; i < missingCount; i++) {
             quizData.questions.push({
               question: `What is the main topic of this content?`,
