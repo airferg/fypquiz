@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { Brain, Sparkles, Users, BookOpen, Trophy, ArrowRight, Play, Zap, Target, Award, Menu, X } from 'lucide-react'
+import { Brain, Sparkles, Users, BookOpen, Trophy, ArrowRight, Play, Zap, Target, Award, Menu, X, MessageSquare } from 'lucide-react'
 
 export default function LandingPage() {
   const router = useRouter()
@@ -228,6 +228,32 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Quick Links Section */}
+      <section className="py-16 px-6">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl font-bold mb-8">Explore More</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <a href="/blog" className="group p-6 bg-white/5 rounded-xl hover:bg-white/10 transition-all">
+              <BookOpen className="h-12 w-12 text-accent mx-auto mb-4 group-hover:scale-110 transition-transform" />
+              <h3 className="text-xl font-semibold mb-2">Study Tips & Resources</h3>
+              <p className="text-gray-400">Discover effective study strategies and learning resources</p>
+            </a>
+            
+            <a href="/feedback" className="group p-6 bg-white/5 rounded-xl hover:bg-white/10 transition-all">
+              <MessageSquare className="h-12 w-12 text-accent mx-auto mb-4 group-hover:scale-110 transition-transform" />
+              <h3 className="text-xl font-semibold mb-2">Share Your Feedback</h3>
+              <p className="text-gray-400">Help us improve and suggest new features</p>
+            </a>
+            
+            <a href="/auth" className="group p-6 bg-white/5 rounded-xl hover:bg-white/10 transition-all">
+              <Users className="h-12 w-12 text-accent mx-auto mb-4 group-hover:scale-110 transition-transform" />
+              <h3 className="text-xl font-semibold mb-2">Join Our Community</h3>
+              <p className="text-gray-400">Connect with other students and start learning</p>
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-20 px-6 bg-gradient-to-r from-accent/20 to-purple-500/20">
         <div className="max-w-4xl mx-auto text-center">
@@ -248,22 +274,58 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="py-12 px-6 border-t border-white/10">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-center">
+          {/* Main Footer Navigation */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Product</h3>
+              <div className="space-y-2 text-sm text-gray-400">
+                <a href="#features" className="block hover:text-white transition-colors">Features</a>
+                <a href="#how-it-works" className="block hover:text-white transition-colors">How it Works</a>
+                <a href="/blog" className="block hover:text-white transition-colors">Blog</a>
+                <a href="/feedback" className="block hover:text-white transition-colors">Feedback</a>
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Resources</h3>
+              <div className="space-y-2 text-sm text-gray-400">
+                <a href="/blog" className="block hover:text-white transition-colors">Study Tips</a>
+                <a href="/blog" className="block hover:text-white transition-colors">Learning Resources</a>
+                <a href="/feedback" className="block hover:text-white transition-colors">Feature Requests</a>
+                <a href="/blog" className="block hover:text-white transition-colors">Success Stories</a>
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Company</h3>
+              <div className="space-y-2 text-sm text-gray-400">
+                <a href="/blog" className="block hover:text-white transition-colors">About Us</a>
+                <a href="/feedback" className="block hover:text-white transition-colors">Contact</a>
+                <a href="#" className="block hover:text-white transition-colors">Privacy Policy</a>
+                <a href="#" className="block hover:text-white transition-colors">Terms of Service</a>
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Get Started</h3>
+              <div className="space-y-2 text-sm text-gray-400">
+                <a href="/auth" className="block hover:text-white transition-colors">Sign Up</a>
+                <a href="/auth" className="block hover:text-white transition-colors">Login</a>
+                <a href="/feedback" className="block hover:text-white transition-colors">Demo Request</a>
+                <a href="/blog" className="block hover:text-white transition-colors">Tutorial</a>
+              </div>
+            </div>
+          </div>
+          
+          {/* Bottom Footer */}
+          <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-white/10">
             <div className="flex items-center space-x-2 mb-4 md:mb-0">
               <Brain className="h-6 w-6 text-accent" />
               <span className="text-xl font-bold">fypquiz</span>
             </div>
-            <div className="flex space-x-6 text-sm text-gray-400">
-              <a href="/blog" className="hover:text-white transition-colors">Blog</a>
-              <a href="#features" className="hover:text-white transition-colors">Features</a>
-              <a href="#how-it-works" className="hover:text-white transition-colors">How it Works</a>
-              <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
-              <a href="#" className="hover:text-white transition-colors">Contact</a>
+            <div className="text-sm text-gray-500">
+              © 2024 fypquiz. Helping students focus and learn better.
             </div>
-          </div>
-          <div className="text-center mt-8 text-sm text-gray-500">
-            © 2024 fypquiz. All rights reserved.
           </div>
         </div>
       </footer>
