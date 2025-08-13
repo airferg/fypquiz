@@ -78,12 +78,20 @@ export default function FeedbackPage() {
             <p className="text-xl text-gray-300 mb-6">
               Your feedback has been submitted successfully. We appreciate your input!
             </p>
-            <button
-              onClick={() => router.push('/dashboard')}
-              className="bg-accent text-white px-6 py-3 rounded-lg hover:bg-accent/90 transition-all"
-            >
-              Back to Dashboard
-            </button>
+            <div className="flex items-center justify-center gap-4">
+              <button
+                onClick={() => router.push('/')}
+                className="bg-accent text-white px-6 py-3 rounded-lg hover:bg-accent/90 transition-all"
+              >
+                Back to Home
+              </button>
+              <button
+                onClick={() => router.push('/blog')}
+                className="bg-white/10 text-white px-6 py-3 rounded-lg hover:bg-white/20 transition-all"
+              >
+                Study Tips
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -98,11 +106,18 @@ export default function FeedbackPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <button
-                onClick={() => router.push('/dashboard')}
+                onClick={() => router.push('/')}
                 className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors"
               >
                 <ArrowLeft className="h-4 w-4" />
-                <span>Back to Dashboard</span>
+                <span>Back to Home</span>
+              </button>
+              <button
+                onClick={() => router.push('/blog')}
+                className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                <span>Study Tips</span>
               </button>
             </div>
             <div className="flex items-center space-x-2">
@@ -121,6 +136,20 @@ export default function FeedbackPage() {
           <p className="text-xl text-gray-300">
             Your feedback helps us create a better learning experience for students like you.
           </p>
+          <div className="mt-6 flex items-center justify-center gap-4">
+            <button
+              onClick={() => router.push('/')}
+              className="text-accent hover:text-accent/80 transition-colors"
+            >
+              Back to Home
+            </button>
+            <button
+              onClick={() => router.push('/blog')}
+              className="text-accent hover:text-accent/80 transition-colors"
+            >
+              Study Tips & Blog
+            </button>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">

@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://fypquiz.com/sitemap.xml
+
+# Allow all public pages
+Allow: /blog
+Allow: /feedback
+Allow: /auth
+
+# Disallow authenticated pages
+Disallow: /dashboard
+Disallow: /quiz
+Disallow: /collection
+Disallow: /videos
+
+# Crawl delay
+Crawl-delay: 1
