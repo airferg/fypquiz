@@ -4,6 +4,21 @@ import { createSupabaseServer } from '@/lib/supabase'
 export async function GET() {
   try {
     const supabase = createSupabaseServer()
+    
+    // Test database connection first
+    const { data: testData, error: testError } = await supabase
+      .from('blog_posts')
+      .select('id')
+      .limit(1)
+    
+    if (testError) {
+      console.error('Database connection test failed:', testError)
+      return NextResponse.json({ 
+        error: 'Database connection failed',
+        details: testError.message 
+      }, { status: 500 })
+    }
+    
     // Get total posts
     const { data: totalPosts, error: totalError } = await supabase
       .from('blog_posts')

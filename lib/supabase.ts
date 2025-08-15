@@ -1,25 +1,27 @@
 import { createClient } from '@supabase/supabase-js'
-import { config } from './config'
 
 // Only create Supabase client on the client side
 let supabase: any = null
 
 if (typeof window !== 'undefined') {
+  // Only check for client-side environment variables
+  const clientUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const clientKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  
   console.log('Supabase config check:', {
-    url: config.supabase.url ? 'Set' : 'Missing',
-    anonKey: config.supabase.anonKey ? 'Set' : 'Missing',
-    serviceRoleKey: config.supabase.serviceRoleKey ? 'Set' : 'Missing'
+    url: clientUrl ? 'Set' : 'Missing',
+    anonKey: clientKey ? 'Set' : 'Missing'
   })
 
-  if (!config.supabase.url || !config.supabase.anonKey) {
+  if (!clientUrl || !clientKey) {
     console.error('Supabase environment variables are missing:', {
-      url: !!config.supabase.url,
-      anonKey: !!config.supabase.anonKey
+      url: !!clientUrl,
+      anonKey: !!clientKey
     })
     throw new Error('Supabase environment variables are not set')
   }
 
-  supabase = createClient(config.supabase.url, config.supabase.anonKey)
+  supabase = createClient(clientUrl, clientKey)
   console.log('Supabase client initialized successfully')
 }
 
@@ -27,10 +29,15 @@ if (typeof window !== 'undefined') {
 
 // Server-side Supabase client for API routes
 export const createSupabaseServer = () => {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-    process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-  )
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  
+  if (!url || !key) {
+    console.error('Missing Supabase configuration for server client')
+    throw new Error('Supabase configuration incomplete')
+  }
+  
+  return createClient(url, key)
 }
 
 export { supabase }

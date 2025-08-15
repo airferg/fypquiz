@@ -88,11 +88,15 @@ function calculateReadTime(content: string): number {
 
 export async function POST() {
   try {
+    console.log('Blog generate API called')
+    
     const apiKey = process.env.OPEN_AI_API_KEY
     if (!apiKey) {
       console.error('OPEN_AI_API_KEY is missing')
       return NextResponse.json({ error: 'OPEN_AI_API_KEY is not configured' }, { status: 500 })
     }
+    
+    console.log('OpenAI API key found, initializing OpenAI client')
     const openai = new OpenAI({ apiKey })
 
     // Select a random template
@@ -167,7 +171,10 @@ Make sure to:
     }
 
     // Save to database
+    console.log('Attempting to save blog post to database')
     const supabase = createSupabaseServer()
+    console.log('Supabase client created, inserting blog post')
+    
     const { data, error } = await supabase
       .from('blog_posts')
       .insert([blogPost])
@@ -176,7 +183,11 @@ Make sure to:
 
     if (error) {
       console.error('Error saving blog post:', error)
-      return NextResponse.json({ error: 'Failed to save post' }, { status: 500 })
+      return NextResponse.json({ 
+        error: 'Failed to save post',
+        details: error.message,
+        code: error.code
+      }, { status: 500 })
     }
 
     return NextResponse.json({ 

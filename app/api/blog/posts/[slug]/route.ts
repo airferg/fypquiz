@@ -7,7 +7,7 @@ export async function GET(
 ) {
   try {
     const supabase = createSupabaseServer()
-    const { data: posts, error } = await supabase
+    const { data: post, error } = await supabase
       .from('blog_posts')
       .select('*')
       .eq('slug', params.slug)
@@ -19,7 +19,20 @@ export async function GET(
       return NextResponse.json({ error: 'Post not found' }, { status: 404 })
     }
 
-    return NextResponse.json({ post: posts })
+    // Transform database fields to match frontend expectations
+    const transformedPost = {
+      id: post.id,
+      title: post.title,
+      slug: post.slug,
+      excerpt: post.excerpt,
+      content: post.content,
+      publishedAt: post.published_at,
+      readTime: post.read_time,
+      keywords: post.keywords || [],
+      imageUrl: post.image_url
+    }
+
+    return NextResponse.json({ post: transformedPost })
   } catch (error) {
     console.error('Error in blog post API:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
