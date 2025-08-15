@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import OpenAI from 'openai'
-import { supabase } from '@/lib/supabase'
+import { createSupabaseServer } from '@/lib/supabase'
 
 // Blog post templates with target keywords
 const blogTemplates = [
@@ -167,6 +167,7 @@ Make sure to:
     }
 
     // Save to database
+    const supabase = createSupabaseServer()
     const { data, error } = await supabase
       .from('blog_posts')
       .insert([blogPost])

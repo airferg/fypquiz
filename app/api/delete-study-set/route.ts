@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { createSupabaseServer } from '@/lib/supabase'
 
 export async function DELETE(request: NextRequest) {
   try {
+    const supabase = createSupabaseServer()
     // Get the study set ID from the request body
     const { studySetId } = await request.json()
 

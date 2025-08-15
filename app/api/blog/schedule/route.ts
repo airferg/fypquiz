@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { createSupabaseServer } from '@/lib/supabase'
 
 // Schedule configuration
 const SCHEDULE_CONFIG = {
@@ -34,6 +34,7 @@ export async function POST() {
     const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate())
     const todayEnd = new Date(todayStart.getTime() + 24 * 60 * 60 * 1000)
     
+    const supabase = createSupabaseServer()
     const { data: todayPosts, error: checkError } = await supabase
       .from('blog_posts')
       .select('id')
@@ -53,7 +54,8 @@ export async function POST() {
     }
     
     // Generate and publish a new post
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/blog/generate`, {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://fypquiz.com'
+    const response = await fetch(`${baseUrl}/api/blog/generate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
