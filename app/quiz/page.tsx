@@ -16,7 +16,14 @@ interface Question {
 interface QuizData {
   id?: string
   title: string
-  questions: Question[]
+  questions?: Question[]
+  quiz_data?: {
+    questions: Question[]
+  }
+  last_score?: number
+  background_video?: string
+  voice_selection?: string
+  audio_files?: any[]
 }
 
 function QuizContent() {
