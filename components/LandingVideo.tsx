@@ -1,18 +1,22 @@
 'use client'
 
 import { useRef, useEffect, useState } from 'react'
+import dynamic from 'next/dynamic'
 
-export default function LandingVideo() {
+// Dynamically import the video component to avoid SSR
+const VideoPlayer = dynamic(() => Promise.resolve(VideoPlayerComponent), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full bg-gray-200 animate-pulse flex items-center justify-center">
+      <div className="text-gray-400">Loading video...</div>
+    </div>
+  )
+})
+
+function VideoPlayerComponent() {
   const videoRef = useRef<HTMLVideoElement>(null)
-  const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
-    setIsClient(true)
-  }, [])
-
-  useEffect(() => {
-    if (!isClient) return
-    
     const video = videoRef.current
     if (video) {
       // Force autoplay
@@ -46,30 +50,30 @@ export default function LandingVideo() {
         document.removeEventListener('touchstart', handleUserInteraction)
       }
     }
-  }, [isClient])
+  }, [])
 
+  return (
+    <video
+      ref={videoRef}
+      src="/landingpagesr.mov"
+      className="w-full h-full object-cover"
+      loop
+      muted
+      playsInline
+      autoPlay
+      controls={false}
+      preload="auto"
+    >
+      Your browser does not support the video tag.
+    </video>
+  )
+}
+
+export default function LandingVideo() {
   return (
     <div className="w-full max-w-sm mx-auto px-4">
       <div className="relative w-full aspect-[9/16] rounded-[15px] overflow-hidden shadow-2xl">
-        {isClient ? (
-          <video
-            ref={videoRef}
-            src="/landingpagesr.mov"
-            className="w-full h-full object-cover"
-            loop
-            muted
-            playsInline
-            autoPlay
-            controls={false}
-            preload="auto"
-          >
-            Your browser does not support the video tag.
-          </video>
-        ) : (
-          <div className="w-full h-full bg-gray-200 animate-pulse flex items-center justify-center">
-            <div className="text-gray-400">Loading video...</div>
-          </div>
-        )}
+        <VideoPlayer />
       </div>
     </div>
   )
