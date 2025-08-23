@@ -130,9 +130,10 @@ function DashboardContent() {
     // If we have audio files, attach them to the questions
     if (studySet.audio_files && studySet.audio_files.length > 0 && studySet.quiz_data?.questions) {
       console.log('Found audio files in study set:', studySet.audio_files)
+      const audioFiles = studySet.audio_files // Store in local variable for TypeScript
       const questionsWithAudio = studySet.quiz_data.questions.map((question: any, index: number) => ({
         ...question,
-        audioUrl: studySet.audio_files[index] || 'dummy-audio'
+        audioUrl: audioFiles[index] || 'dummy-audio'
       }))
       
       console.log('Questions with audio attached:', questionsWithAudio)
