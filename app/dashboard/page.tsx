@@ -5,6 +5,7 @@ import { useAuth, AuthProvider } from '@/components/AuthProvider'
 import { useRouter } from 'next/navigation'
 import { BookOpen, MessageSquare, Trophy, LogOut, Menu, X, ArrowRight, Play, FileText, Video, Link, CheckCircle, AlertCircle, Sparkles, Plus, Search, Filter, SortAsc, SortDesc, Trash2 } from 'lucide-react'
 import FileUploader from '@/components/FileUploader'
+import PWAInstall from '@/components/PWAInstall'
 import { supabase } from '@/lib/supabase'
 
 
@@ -734,6 +735,9 @@ function DashboardContent() {
             </div>
           </div>
         )}
+
+        {/* PWA Install Component */}
+        <PWAInstall />
       </main>
     </div>
   )

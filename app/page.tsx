@@ -6,6 +6,7 @@ import { useState } from 'react'
 import Logo from '@/components/Logo'
 import LandingFileUpload from '@/components/LandingFileUpload'
 import LandingVideo from '@/components/LandingVideo'
+import PWAInstall from '@/components/PWAInstall'
 
 export default function LandingPage() {
   const router = useRouter()
@@ -132,47 +133,47 @@ export default function LandingPage() {
         </div>
         
         {/* Hero Content */}
-        <div className="text-center px-6 max-w-6xl mx-auto">
-          <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-[#5CA4F6] to-blue-600 bg-clip-text text-transparent">
+        <div className="text-center px-4 sm:px-6 max-w-6xl mx-auto">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-[#5CA4F6] to-blue-600 bg-clip-text text-transparent leading-tight">
             Study like it's TikTok.
           </h1>
-          <p className="text-base md:text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+          <p className="text-lg sm:text-xl text-gray-600 mb-8 max-w-3xl mx-auto px-4">
             Paste a link or drop your notes — we turn them into fun, scroll-style quizzes that actually stick.
           </p>
           
           {/* YouTube Captions Notice */}
-          <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-xl max-w-2xl mx-auto">
+          <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-xl max-w-2xl mx-auto mx-4">
             <div className="flex items-center justify-center space-x-2 text-blue-700">
-              <AlertCircle className="h-5 w-5" />
+              <AlertCircle className="h-5 w-5 flex-shrink-0" />
               <span className="text-sm font-medium">
                 <strong>YouTube videos:</strong> Make sure to turn on captions/CC for best results! 🎥
               </span>
             </div>
           </div>
           
-          {/* Trust & Social Proof */}
-          <div className="flex flex-wrap justify-center items-center gap-4 mb-8">
-            <div className="flex items-center space-x-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-gray-200">
-              <Heart className="h-5 w-5 text-pink-500" />
-              <span className="text-xs font-medium text-gray-700">10K+ students already studying smarter</span>
+          {/* Trust & Social Proof - Mobile Optimized */}
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 mb-8 px-4">
+            <div className="flex items-center space-x-2 bg-white/80 backdrop-blur-sm px-4 py-3 rounded-full border border-gray-200 w-full sm:w-auto justify-center">
+              <Heart className="h-5 w-5 text-pink-500 flex-shrink-0" />
+              <span className="text-sm font-medium text-gray-700">10K+ students already studying smarter</span>
             </div>
-            <div className="flex items-center space-x-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-gray-200">
-              <Star className="h-5 w-5 text-yellow-500" />
-              <span className="text-xs font-medium text-gray-700">4.9/5 ⭐</span>
+            <div className="flex items-center space-x-2 bg-white/80 backdrop-blur-sm px-4 py-3 rounded-full border border-gray-200 w-full sm:w-auto justify-center">
+              <Star className="h-5 w-5 text-yellow-500 flex-shrink-0" />
+              <span className="text-sm font-medium text-gray-700">4.9/5 ⭐</span>
             </div>
-            <div className="flex items-center space-x-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-gray-200">
-              <Flame className="h-5 w-5 text-orange-500" />
-              <span className="text-xs font-medium text-gray-700">Built for Gen Z learners</span>
+            <div className="flex items-center space-x-2 bg-white/80 backdrop-blur-sm px-4 py-3 rounded-full border border-gray-200 w-full sm:w-auto justify-center">
+              <Flame className="h-5 w-5 text-orange-500 flex-shrink-0" />
+              <span className="text-sm font-medium text-gray-700">Built for Gen Z learners</span>
             </div>
           </div>
           
-
-          
           {/* File Upload Component */}
-          <LandingFileUpload onFileUpload={handleFileUpload} />
+          <div className="px-4">
+            <LandingFileUpload onFileUpload={handleFileUpload} />
+          </div>
           
           {/* Demo Video */}
-          <div className="mt-8 flex flex-col items-center">
+          <div className="mt-8 flex flex-col items-center px-4">
             <LandingVideo />
             <p className="text-sm text-gray-500 mt-4 text-center max-w-md">
               See how fast it works in action! Watch the magic happen in real-time.
@@ -196,35 +197,35 @@ export default function LandingPage() {
           </div>
         </div>
         
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4 text-gray-800">Why Students Love Us</h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-gray-800">Why Students Love Us</h2>
+            <p className="text-base sm:text-lg text-gray-600 max-w-3xl mx-auto px-4">
               We're not just another study app. We're the TikTok-style study hack that Gen Z actually wants to use.
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-2xl p-8 text-center shadow-lg border border-gray-100 hover:shadow-xl transition-all">
-              <Logo size={64} className="mx-auto mb-6" />
-              <h3 className="text-xl font-semibold mb-4 text-gray-800">Turn boring notes into TikTok-style quizzes</h3>
-              <p className="text-gray-600 text-base">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+            <div className="bg-white rounded-2xl p-6 sm:p-8 text-center shadow-lg border border-gray-100 hover:shadow-xl transition-all">
+              <Logo size={48} className="mx-auto mb-4 sm:mb-6" />
+              <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-gray-800">Turn boring notes into TikTok-style quizzes</h3>
+              <p className="text-gray-600 text-sm sm:text-base">
                 Upload your boring lecture videos, textbooks, or canvas pages, and let our AI create study sets that actually stick in your brain
               </p>
             </div>
             
-            <div className="bg-white rounded-2xl p-8 text-center shadow-lg border border-gray-100 hover:shadow-xl transition-all">
-              <Gamepad2 className="h-16 w-16 text-[#5CA4F6] mx-auto mb-6" />
-              <h3 className="text-xl font-semibold mb-4 text-gray-800">Choose your vibe: Rachel, Josh, Emily & more</h3>
-                              <p className="text-gray-600 text-base">
-                  Pick from professional ElevenLabs voices that match your study mood. From encouraging to educational, find the perfect voice to keep you engaged.
-                </p>
+            <div className="bg-white rounded-2xl p-6 sm:p-8 text-center shadow-lg border border-gray-100 hover:shadow-xl transition-all">
+              <Gamepad2 className="h-12 w-12 sm:h-16 sm:w-16 text-[#5CA4F6] mx-auto mb-4 sm:mb-6" />
+              <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-gray-800">Choose your vibe: Rachel, Josh, Emily & more</h3>
+              <p className="text-gray-600 text-sm sm:text-base">
+                Pick from professional ElevenLabs voices that match your study mood. From encouraging to educational, find the perfect voice to keep you engaged.
+              </p>
             </div>
             
-            <div className="bg-white rounded-2xl p-8 text-center shadow-lg border border-gray-100 hover:shadow-xl transition-all">
-              <Sparkles className="h-16 w-16 text-[#5CA4F6] mx-auto mb-6" />
-              <h3 className="text-xl font-semibold mb-4 text-gray-800">Background focus hacks: Minecraft parkour, Subway Surfers, more</h3>
-              <p className="text-gray-600 text-base">
+            <div className="bg-white rounded-2xl p-6 sm:p-8 text-center shadow-lg border border-gray-100 hover:shadow-xl transition-all">
+              <Sparkles className="h-12 w-12 sm:h-16 sm:w-16 text-[#5CA4F6] mx-auto mb-4 sm:mb-6" />
+              <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-gray-800">Background focus hacks: Minecraft parkour, Subway Surfers, more</h3>
+              <p className="text-gray-600 text-sm sm:text-base">
                 Study with Minecraft parkour or Subway Surfers in the background = the ultimate focus hack. Your brain stays engaged while you learn.
               </p>
             </div>
@@ -247,21 +248,21 @@ export default function LandingPage() {
           </div>
         </div>
         
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4 text-gray-800">How It Works</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-gray-800">How It Works</h2>
+            <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto px-4">
               Three simple steps to transform your study experience
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             <div className="text-center">
-              <div className="bg-[#5CA4F6] rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6 shadow-lg">
-                <span className="text-2xl font-bold text-white">1</span>
+              <div className="bg-[#5CA4F6] rounded-full w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-lg">
+                <span className="text-xl sm:text-2xl font-bold text-white">1</span>
               </div>
-              <h3 className="text-xl font-semibold mb-4 text-gray-800">Paste a link or upload notes</h3>
-              <p className="text-gray-600 text-base">
+              <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-gray-800">Paste a link or upload notes</h3>
+              <p className="text-gray-600 text-sm sm:text-base">
                 Copy a link to a webpage, YouTube video, or upload any PDF, video, or document. Our AI will analyze it and create engaging study sets.
               </p>
               <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
@@ -272,29 +273,29 @@ export default function LandingPage() {
             </div>
             
             <div className="text-center">
-              <div className="bg-[#5CA4F6] rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6 shadow-lg">
-                <span className="text-2xl font-bold text-white">2</span>
+              <div className="bg-[#5CA4F6] rounded-full w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-lg">
+                <span className="text-xl sm:text-2xl font-bold text-white">2</span>
               </div>
-              <h3 className="text-xl font-semibold mb-4 text-gray-800">AI makes a quiz in seconds</h3>
-              <p className="text-gray-600 text-base">
+              <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-gray-800">AI makes a quiz in seconds</h3>
+              <p className="text-gray-600 text-sm sm:text-base">
                 Our AI creates engaging study sets with your chosen voice and background. No more boring flashcards, just fun learning that sticks.
               </p>
             </div>
             
             <div className="text-center">
-              <div className="bg-[#5CA4F6] rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6 shadow-lg">
-                <span className="text-2xl font-bold text-white">3</span>
+              <div className="bg-[#5CA4F6] rounded-full w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-lg">
+                <span className="text-xl sm:text-2xl font-bold text-white">3</span>
               </div>  
-              <h3 className="text-xl font-semibold mb-4 text-gray-800">Study while you scroll-style focus</h3>
-              <p className="text-gray-600 text-base">
+              <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-gray-800">Study while you scroll-style focus</h3>
+              <p className="text-gray-600 text-sm sm:text-base">
                 Take the study set with your favorite background, laugh at the commentary, and actually remember what you learned.
               </p>
             </div>
           </div>
           
           {/* Microcopy for activation */}
-          <div className="text-center mt-12">
-            <p className="text-base text-gray-600 mb-4">
+          <div className="text-center mt-8 sm:mt-12">
+            <p className="text-sm sm:text-base text-gray-600 mb-4 px-4">
               See how fast it works? Try it on your notes in 10 seconds.
             </p>
             <button 
@@ -461,6 +462,9 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+
+      {/* PWA Install Component */}
+      <PWAInstall />
     </div>
   )
 } 
