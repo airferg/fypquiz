@@ -8,6 +8,8 @@ if (!config.supabase.url || !config.supabase.serviceRoleKey) {
 
 const supabase = createClient(config.supabase.url, config.supabase.serviceRoleKey)
 
+
+
 export async function GET(request: NextRequest) {
   try {
     // Get the authorization header

@@ -1,11 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useAuth } from '@/components/AuthProvider'
+import { useAuth, AuthProvider } from '@/components/AuthProvider'
 import { useRouter } from 'next/navigation'
-import { Brain, ArrowLeft, CheckCircle, XCircle, AlertCircle } from 'lucide-react'
+import { ArrowLeft, CheckCircle, XCircle, AlertCircle } from 'lucide-react'
+import Logo from '@/components/Logo'
 
-export default function AuthPage() {
+function AuthContent() {
   const { user, loading, signIn, signUp, signInWithGoogle, signOut } = useAuth()
   const router = useRouter()
   
@@ -67,10 +68,10 @@ export default function AuthPage() {
   // Show loading spinner with timeout message
   if (loading && !timeoutReached) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-accent mx-auto mb-4"></div>
-          <p className="text-lg text-gray-300">Loading your chaotic experience...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#5CA4F6] mx-auto mb-4"></div>
+          <p className="text-lg text-gray-600">Loading your experience...</p>
         </div>
       </div>
     )
@@ -79,15 +80,15 @@ export default function AuthPage() {
   // Show timeout message if loading takes too long
   if (loading && timeoutReached) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center max-w-md">
           <div className="mb-4">
-            <Brain className="h-16 w-16 text-accent mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-white mb-2">fypquiz</h1>
-            <p className="text-gray-300 mb-4">
+            <Logo size={64} className="mx-auto mb-4" />
+            <h1 className="text-2xl font-bold text-gray-800 mb-2">fypquiz</h1>
+            <p className="text-gray-600 mb-4">
               Having trouble connecting to our servers. This might be due to:
             </p>
-            <ul className="text-sm text-gray-400 text-left mb-4">
+            <ul className="text-sm text-gray-500 text-left mb-4">
               <li>• Network connectivity issues</li>
               <li>• Supabase service temporarily unavailable</li>
               <li>• Environment variables not properly configured</li>
@@ -95,7 +96,7 @@ export default function AuthPage() {
           </div>
           <button
             onClick={() => router.refresh()}
-            className="bg-accent text-white px-6 py-2 rounded-lg hover:bg-accent/90 transition-all"
+            className="bg-[#5CA4F6] text-white px-6 py-2 rounded-lg hover:bg-[#5CA4F6]/90 transition-all"
           >
             Try Again
           </button>
@@ -105,12 +106,12 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="max-w-md w-full">
         {/* Back button */}
         <button
           onClick={handleBackToLanding}
-          className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors mb-8"
+          className="flex items-center space-x-2 text-gray-500 hover:text-gray-700 transition-colors mb-8"
         >
           <ArrowLeft className="h-4 w-4" />
           <span>Back to Landing</span>
@@ -118,13 +119,13 @@ export default function AuthPage() {
 
         <div className="text-center mb-8">
           <div className="flex items-center justify-center space-x-2 mb-4">
-            <Brain className="h-8 w-8 text-accent" />
-            <span className="text-2xl font-bold text-white">fypquiz</span>
+            <Logo size={32} />
+            <span className="text-xl font-bold text-gray-800">fypquiz</span>
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">
             {isSignUp ? 'Create Your Account' : 'Welcome Back'}
           </h1>
-          <p className="text-gray-300">
+          <p className="text-gray-600">
             {isSignUp 
               ? 'Join thousands of students studying smarter with AI-powered quizzes'
               : 'Sign in to continue your learning journey'
@@ -132,11 +133,11 @@ export default function AuthPage() {
           </p>
         </div>
 
-        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6">
+        <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
           {/* Google Sign In Button */}
           <button
             onClick={handleGoogleSignIn}
-            className="w-full bg-white text-gray-900 py-3 px-4 rounded-lg font-semibold hover:bg-gray-100 transition-all flex items-center justify-center space-x-3 mb-6"
+            className="w-full bg-white text-gray-900 py-3 px-4 rounded-lg font-semibold hover:bg-gray-50 transition-all flex items-center justify-center space-x-3 mb-6 border border-gray-200"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -150,10 +151,10 @@ export default function AuthPage() {
           {/* Divider */}
           <div className="relative mb-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-white/20"></div>
+              <div className="w-full border-t border-gray-200"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white/10 text-gray-400">or</span>
+              <span className="px-2 bg-white text-gray-500">or</span>
             </div>
           </div>
 
@@ -161,7 +162,7 @@ export default function AuthPage() {
             <button
               onClick={() => setIsSignUp(false)}
               className={`flex-1 py-2 px-4 rounded-lg transition-colors ${
-                !isSignUp ? 'bg-accent text-white' : 'bg-white/10 text-gray-300'
+                !isSignUp ? 'bg-[#5CA4F6] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
               Sign In
@@ -169,7 +170,7 @@ export default function AuthPage() {
             <button
               onClick={() => setIsSignUp(true)}
               className={`flex-1 py-2 px-4 rounded-lg transition-colors ${
-                isSignUp ? 'bg-accent text-white' : 'bg-white/10 text-gray-300'
+                isSignUp ? 'bg-[#5CA4F6] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
               Sign Up
@@ -178,53 +179,53 @@ export default function AuthPage() {
 
           <form onSubmit={handleAuth} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-white mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 Email
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+                className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#5CA4F6] focus:border-transparent"
                 placeholder="Enter your email"
                 required
               />
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-white mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 Password
               </label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+                className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#5CA4F6] focus:border-transparent"
                 placeholder="Enter your password"
                 required
               />
             </div>
 
             {authError && (
-              <div className="text-red-400 text-sm bg-red-500/20 border border-red-400 p-3 rounded-lg">
+              <div className="text-red-600 text-sm bg-red-50 border border-red-200 p-3 rounded-lg">
                 {authError}
               </div>
             )}
 
             <button 
               type="submit" 
-              className="w-full bg-accent text-white py-3 px-4 rounded-lg font-semibold hover:bg-accent/90 transition-all"
+              className="w-full bg-[#5CA4F6] text-white py-3 px-4 rounded-lg font-semibold hover:bg-[#5CA4F6]/90 transition-all"
             >
               {isSignUp ? 'Create Account' : 'Sign In'}
             </button>
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-gray-500">
               {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
               <button
                 onClick={() => setIsSignUp(!isSignUp)}
-                className="text-accent hover:text-accent/80 transition-colors"
+                className="text-[#5CA4F6] hover:text-[#5CA4F6]/80 transition-colors"
               >
                 {isSignUp ? 'Sign In' : 'Sign Up'}
               </button>
@@ -233,5 +234,13 @@ export default function AuthPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function AuthPage() {
+  return (
+    <AuthProvider>
+      <AuthContent />
+    </AuthProvider>
   )
 } 

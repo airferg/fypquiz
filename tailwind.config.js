@@ -8,9 +8,10 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#6366f1',
-        secondary: '#8b5cf6',
-        accent: '#f59e0b',
+        primary: '#5CA4F6',
+        secondary: '#4A90E2',
+        accent: '#5CA4F6',
+        brand: '#5CA4F6',
       },
       animation: {
         'bounce-slow': 'bounce 2s infinite',

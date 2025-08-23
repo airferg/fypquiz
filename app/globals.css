@@ -11,7 +11,7 @@
 }
 
 .slider::-webkit-slider-track {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(92, 164, 246, 0.2);
   height: 8px;
   border-radius: 4px;
 }
@@ -19,7 +19,7 @@
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  background: #fbbf24;
+  background: #5CA4F6;
   height: 20px;
   width: 20px;
   border-radius: 50%;
@@ -27,24 +27,23 @@
 }
 
 .slider::-moz-range-track {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(92, 164, 246, 0.2);
   height: 8px;
   border-radius: 4px;
 }
 
 .slider::-moz-range-thumb {
-  background: #fbbf24;
+  background: #5CA4F6;
   height: 20px;
   width: 20px;
   border-radius: 50%;
-  cursor: pointer;
   border: none;
 }
 
 @layer base {
   html {
     font-family: 'Inter', system-ui, sans-serif;
-    background-color: black;
+    background-color: white;
   }
 }
 
@@ -54,15 +53,15 @@
   }
   
   .btn-secondary {
-    @apply bg-white/10 backdrop-blur-md border border-white/20 text-white font-semibold py-2 px-4 rounded-lg transition-colors hover:bg-white/20;
+    @apply bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg transition-colors border border-gray-200;
   }
   
   .card {
-    @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6;
+    @apply bg-white border border-gray-200 rounded-2xl p-6 shadow-sm;
   }
   
   .input-field {
-    @apply w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent;
+    @apply w-full px-4 py-2 bg-white border border-gray-200 rounded-lg text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent;
   }
 }
 

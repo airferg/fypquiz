@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { Upload, FileText, File, AlertCircle, Video } from 'lucide-react'
+import { Upload, FileText, File, AlertCircle, Video, Link, Globe } from 'lucide-react'
 import { extractTextFromFile } from '@/lib/fileProcessor'
 
 interface FileUploaderProps {
@@ -13,6 +13,7 @@ interface FileUploaderProps {
 export default function FileUploader({ onFileUpload, isLoading = false }: FileUploaderProps) {
   const [error, setError] = useState<string>('')
   const [processingStatus, setProcessingStatus] = useState<string>('')
+  const [url, setUrl] = useState<string>('')
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     setError('')
@@ -79,6 +80,45 @@ export default function FileUploader({ onFileUpload, isLoading = false }: FileUp
     }
   }, [onFileUpload])
 
+  const handleUrlSubmit = async () => {
+    if (!url.trim()) {
+      setError('Please enter a URL')
+      return
+    }
+
+    setError('')
+    setProcessingStatus('')
+
+    try {
+      setProcessingStatus('Extracting content from URL...')
+      
+      const response = await fetch('/api/extract-url-text', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: url.trim() }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to extract content from URL')
+      }
+
+      setProcessingStatus('Generating quiz questions...')
+      
+      // Use the extracted title as filename, or fallback to URL
+      const fileName = data.title || data.url || 'Web Content'
+      onFileUpload(data.text, fileName)
+      
+    } catch (err) {
+      console.error('URL processing error:', err)
+      const errorMessage = err instanceof Error ? err.message : 'Failed to extract content from URL'
+      setError(errorMessage)
+    }
+  }
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
@@ -105,7 +145,51 @@ export default function FileUploader({ onFileUpload, isLoading = false }: FileUp
   })
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
+    <div className="w-full max-w-2xl mx-auto space-y-6">
+      {/* URL Input Section */}
+      <div className="space-y-4">
+        <div className="text-center">
+          <h3 className="text-lg font-semibold text-white mb-2">Extract Content from URL</h3>
+          <p className="text-sm text-gray-300">
+            Paste a link to a webpage, article, or YouTube video
+          </p>
+        </div>
+        
+        <div className="flex space-x-2">
+          <input
+            type="text"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            placeholder="Paste your link here..."
+            className="flex-1 px-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-800 placeholder-gray-500 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+            disabled={isLoading}
+          />
+          <button
+            onClick={handleUrlSubmit}
+            disabled={isLoading || !url.trim()}
+            className="px-6 py-3 bg-accent text-white rounded-lg hover:bg-accent/80 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          >
+            {isLoading ? (
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+            ) : (
+              'Extract'
+            )}
+          </button>
+        </div>
+        
+        {processingStatus && (
+          <p className="text-sm text-accent text-center">{processingStatus}</p>
+        )}
+      </div>
+
+      {/* Divider */}
+      <div className="flex items-center">
+        <div className="flex-1 border-t border-white/20"></div>
+        <span className="px-4 text-white/60 font-medium">or</span>
+        <div className="flex-1 border-t border-white/20"></div>
+      </div>
+
+      {/* File Upload Section */}
       <div
         {...getRootProps()}
         className={`
@@ -152,7 +236,7 @@ export default function FileUploader({ onFileUpload, isLoading = false }: FileUp
         <div className="mt-4 flex items-center space-x-2 text-red-400 bg-red-500/20 border border-red-400 p-3 rounded-lg">
           <AlertCircle className="h-5 w-5" />
           <div>
-            <span className="font-semibold">File Processing Error:</span>
+            <span className="font-semibold">Processing Error:</span>
             <br />
             <span>{error}</span>
           </div>
@@ -163,14 +247,14 @@ export default function FileUploader({ onFileUpload, isLoading = false }: FileUp
       <div className="mt-4 text-sm text-gray-300">
         <p className="font-semibold mb-2">Tips for better results:</p>
         <ul className="space-y-1">
+          <li>• Works with articles, blog posts, documentation, and wikis</li>
+          <li>• YouTube videos with transcripts work best</li>
+          <li>• Avoid login-required or paywall-protected content</li>
+          <li>• Some JavaScript-heavy sites may not work perfectly</li>
+          <li>• Respect website terms of service and robots.txt</li>
           <li>• Use text-based PDFs (not scanned images)</li>
           <li>• Ensure files are not password-protected</li>
-          <li>• Try converting image-based PDFs to text first</li>
-          <li>• Plain text files work best</li>
           <li>• Videos should have clear speech audio (max 10 minutes)</li>
-          <li>• Video files must be under 200MB</li>
-          <li>• Mobile devices: Use smaller files (under 100MB) for best performance</li>
-          <li>• Check your internet connection - mobile networks may be slower</li>
         </ul>
       </div>
     </div>

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { CheckCircle, XCircle, ArrowRight } from 'lucide-react'
+import { CheckCircle, XCircle } from 'lucide-react'
 
 interface Question {
   question: string
@@ -41,41 +41,11 @@ export default function QuestionCard({ question, onAnswer, onNext, onFinishQuiz,
     setShowFeedback(true)
     setHasAnswered(true)
     
-    // Auto-advance after showing feedback
-    setTimeout(() => {
-      if (hasAnswered) {
-        advanceToNext()
-      }
-    }, 2000)
+    // Call onAnswer immediately - QuizPlayer will handle the auto-advance
+    onAnswer(correct)
   }
 
-  const advanceToNext = () => {
-    console.log('=== advanceToNext called ===')
-    console.log('isLastQuestion:', isLastQuestion)
-    console.log('isCorrect:', isCorrect)
-    console.log('Calling onAnswer with:', isCorrect)
-    onAnswer(isCorrect)
-    setSelectedAnswer(null)
-    setShowFeedback(false)
-    setHasAnswered(false)
-    
-    if (isLastQuestion) {
-      console.log('Last question - finishing quiz')
-      onFinishQuiz()
-    } else {
-      console.log('Not last question - going to next')
-      onNext()
-    }
-  }
-
-  const handleManualNext = () => {
-    console.log('Manual next clicked. hasAnswered:', hasAnswered, 'isLastQuestion:', isLastQuestion)
-    if (hasAnswered) {
-      advanceToNext()
-    } else {
-      console.log('Cannot advance - user has not answered yet')
-    }
-  }
+  // QuizPlayer now handles all navigation logic
 
   const getFeedbackMessage = () => {
     if (isCorrect) {
@@ -95,28 +65,28 @@ export default function QuestionCard({ question, onAnswer, onNext, onFinishQuiz,
       
       return {
         message: randomMessage,
-        icon: <CheckCircle className="h-6 w-6 text-green-500" />,
-        className: "bg-green-50 border-green-200 text-green-800"
+        icon: <CheckCircle className="h-6 w-6 text-green-400" />,
+        className: "bg-green-500/20 border-green-400/60 text-white backdrop-blur-md"
       }
     } else {
       const negativeMessages = [
         "Not quite right",
-        "Try again",
+        "Try again!",
         "That's not it",
-        "Keep trying",
-        "Wrong answer",
-        "Not this time",
-        "Incorrect",
-        "That's not correct",
-        "Try another option",
-        "Wrong choice"
+        "Keep trying!",
+        "Almost there!",
+        "Don't give up!",
+        "You're close!",
+        "Think about it",
+        "Give it another shot!",
+        "You'll get it next time!"
       ];
       const randomMessage = negativeMessages[Math.floor(Math.random() * negativeMessages.length)];
       
       return {
         message: randomMessage,
-        icon: <XCircle className="h-6 w-6 text-red-500" />,
-        className: "bg-red-50 border-red-200 text-red-800"
+        icon: <XCircle className="h-6 w-6 text-red-400" />,
+        className: "bg-red-500/20 border-red-400/60 text-white backdrop-blur-md"
       }
     }
   }
@@ -125,7 +95,7 @@ export default function QuestionCard({ question, onAnswer, onNext, onFinishQuiz,
 
   return (
     <div className="w-full">
-      <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
+      <div className="bg-transparent backdrop-blur-xl rounded-3xl p-6 border border-white/60 shadow-2xl">
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-white text-center flex-1">
@@ -140,16 +110,16 @@ export default function QuestionCard({ question, onAnswer, onNext, onFinishQuiz,
                 onClick={() => handleAnswerSelect(index)}
                 disabled={selectedAnswer !== null}
                 className={`
-                  w-full p-4 text-left rounded-xl border-2 transition-all
+                  w-full p-4 text-left rounded-xl border-2 transition-all duration-300
                   ${selectedAnswer === null
-                    ? 'border-white/30 bg-white/10 hover:bg-white/20 text-white'
+                    ? 'border-white/40 bg-white/20 backdrop-blur-md hover:bg-white/30 hover:border-white/60 text-white shadow-lg hover:shadow-xl'
                     : selectedAnswer === index
                     ? index === question.correctIndex
-                      ? 'border-green-400 bg-green-500/20 text-white'
-                      : 'border-red-400 bg-red-500/20 text-white'
+                      ? 'border-green-400 bg-green-500/20 backdrop-blur-md text-white shadow-lg'
+                      : 'border-red-400 bg-red-500/20 backdrop-blur-md text-white shadow-lg'
                     : selectedAnswer !== null && index === question.correctIndex
-                    ? 'border-green-400 bg-green-500/20 text-white'
-                    : 'border-white/20 bg-white/5 text-white/70'
+                    ? 'border-green-400 bg-green-500/20 backdrop-blur-md text-white shadow-lg'
+                    : 'border-white/30 bg-white/20 backdrop-blur-md text-white/80'
                   }
                   ${selectedAnswer !== null ? 'cursor-default' : 'cursor-pointer'}
                 `}
@@ -163,22 +133,24 @@ export default function QuestionCard({ question, onAnswer, onNext, onFinishQuiz,
         </div>
 
         {showFeedback && (
-          <div className={`mt-6 p-4 rounded-xl border ${isCorrect ? 'border-green-400 bg-green-500/20' : 'border-red-400 bg-red-500/20'}`}>
-            <div className="flex items-center justify-center space-x-3">
+          <div
+            className={`p-4 rounded-xl border backdrop-blur-sm shadow-lg ${feedback.className} mb-4`}
+          >
+            <div className="flex items-center space-x-3">
               {feedback.icon}
-              <span className="font-semibold text-white">{feedback.message}</span>
+              <span className="font-medium">{feedback.message}</span>
             </div>
           </div>
         )}
 
+        {/* Next Question Button */}
         {showFeedback && (
-          <div className="mt-4 flex justify-center">
+          <div className="flex justify-center">
             <button
-              onClick={handleManualNext}
-              className="flex items-center space-x-2 bg-accent text-white px-6 py-3 rounded-full font-semibold hover:bg-accent/90 transition-all"
+              onClick={isLastQuestion ? onFinishQuiz : onNext}
+              className="px-8 py-3 bg-[#5CA4F6] text-white rounded-xl hover:bg-[#4A90E2] transition-all duration-300 shadow-lg hover:shadow-xl font-medium text-lg"
             >
-              <span>{isLastQuestion ? 'Finish Quiz' : 'Next Question'}</span>
-              <ArrowRight className="h-4 w-4" />
+              {isLastQuestion ? 'Finish Quiz' : 'Next Question'}
             </button>
           </div>
         )}

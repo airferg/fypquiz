@@ -12,7 +12,6 @@ Allow: /auth
 # Disallow authenticated pages
 Disallow: /dashboard
 Disallow: /quiz
-Disallow: /collection
 Disallow: /videos
 
 # Crawl delay

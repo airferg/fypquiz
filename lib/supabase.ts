@@ -74,6 +74,9 @@ export type Database = {
           quiz_data: any
           background_video: string
           voice_selection: string
+          last_score?: number
+          total_questions?: number
+          audio_files?: any[]
           created_at: string
           updated_at: string
         }
@@ -85,6 +88,9 @@ export type Database = {
           quiz_data?: any
           background_video?: string
           voice_selection?: string
+          last_score?: number
+          total_questions?: number
+          audio_files?: any[]
           created_at?: string
           updated_at?: string
         }
@@ -96,6 +102,9 @@ export type Database = {
           quiz_data?: any
           background_video?: string
           voice_selection?: string
+          last_score?: number
+          total_questions?: number
+          audio_files?: any[]
           created_at?: string
           updated_at?: string
         }

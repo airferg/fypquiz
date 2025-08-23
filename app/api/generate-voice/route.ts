@@ -1,18 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { config } from '../../../lib/config'
 
-// Helper function to create a timeout promise
-const createTimeout = (ms: number) => new Promise((_, reject) => 
-  setTimeout(() => reject(new Error('Request timeout')), ms)
-)
-
 export async function POST(request: NextRequest) {
   try {
-    const { text, voiceId } = await request.json()
+    const { text, voice_id, study_set_id } = await request.json()
 
-    if (!text || !voiceId) {
+    if (!text || !voice_id) {
       return NextResponse.json(
-        { error: 'Text and voice ID are required' },
+        { error: 'Text and voice_id are required' },
         { status: 400 }
       )
     }
@@ -24,10 +19,12 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Truncate text if it's too long to improve speed
+    console.log(`🎵 Generating voice for: "${text.substring(0, 50)}..." with voice ${voice_id}`)
+
+    // Truncate text if it's too long
     const truncatedText = text.length > 500 ? text.substring(0, 500) + '...' : text
 
-    const responsePromise = fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+    const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voice_id}`, {
       method: 'POST',
       headers: {
         'xi-api-key': config.elevenlabs.apiKey,
@@ -45,42 +42,31 @@ export async function POST(request: NextRequest) {
       }),
     })
 
-    // Add 30-second timeout for voice generation
-    const response = await Promise.race([
-      responsePromise,
-      createTimeout(30000) // 30 seconds timeout
-    ]) as Response
-
     if (!response.ok) {
       const errorData = await response.text()
       console.error('ElevenLabs API error:', errorData)
       return NextResponse.json(
-        { error: 'Failed to generate voice audio' },
-        { status: 500 }
+        { error: 'Failed to generate voice' },
+        { status: response.status }
       )
     }
 
     const audioBuffer = await response.arrayBuffer()
+    const uint8Array = new Uint8Array(audioBuffer)
+    const base64Audio = btoa(String.fromCharCode.apply(null, Array.from(uint8Array)))
     
-    return new NextResponse(audioBuffer, {
-      headers: {
-        'Content-Type': 'audio/mpeg',
-        'Cache-Control': 'public, max-age=3600', // Cache for 1 hour
-      },
+    console.log(`✅ Voice generated successfully (${audioBuffer.byteLength} bytes)`)
+
+    return NextResponse.json({
+      success: true,
+      audio_url: `data:audio/mpeg;base64,${base64Audio}`,
+      size: audioBuffer.byteLength
     })
+
   } catch (error) {
-    console.error('Error generating voice:', error)
-    
-    // Check if it's a timeout error
-    if (error instanceof Error && error.message === 'Request timeout') {
-      return NextResponse.json(
-        { error: 'Voice generation timed out. Please try again.' },
-        { status: 408 }
-      )
-    }
-    
+    console.error('Error in voice generation:', error)
     return NextResponse.json(
-      { error: 'Failed to generate voice audio' },
+      { error: 'Failed to generate voice' },
       { status: 500 }
     )
   }

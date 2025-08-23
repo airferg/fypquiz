@@ -2,27 +2,26 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Check } from 'lucide-react'
+import { Check, ArrowLeft, Play, Video, Settings, Volume2, VolumeX } from 'lucide-react'
 
 
 // Disable SSR for this page
 export const dynamic = 'force-dynamic'
 
 const videos = [
-  // Minecraft
   { label: 'Minecraft_video1', src: '/videos/Minecraft_video1.mp4' },
   { label: 'Minecraft_video2', src: '/videos/Minecraft_video2.mp4' },
   { label: 'Minecraft_video3', src: '/videos/Minecraft_video3.mp4' },
   { label: 'Minecraft_video4', src: '/videos/Minecraft_video4.mp4' },
   { label: 'Minecraft_video5', src: '/videos/Minecraft_video5.mp4' },
   { label: 'Minecraft_video6', src: '/videos/Minecraft_video6.mp4' },
-  // Spiderman
   { label: 'Spiderman_video1', src: '/videos/Spiderman_video1.mp4' },
   { label: 'Spiderman_video2', src: '/videos/Spiderman_video2.mp4' },
   { label: 'Spiderman_video3', src: '/videos/Spiderman_video3.mp4' },
   { label: 'Spiderman_video4', src: '/videos/Spiderman_video4.mp4' },
-  // GTA
-  { label: 'GTA_video1', src: '/videos/gta-video1.mp4' },
+  { label: 'gta_video1', src: '/videos/gta-video1.mp4' },
+  { label: 'lofi-study', src: '/videos/lofi-study.mp4' },
+  { label: 'nature-scene', src: '/videos/nature-scene.mp4' }
 ]
 
 export default function VideosPage() {
@@ -37,26 +36,23 @@ export default function VideosPage() {
     if (selectedVideo) {
       // Store the selected video in session storage
       sessionStorage.setItem('selectedVideo', selectedVideo)
-      // Navigate back to quiz creation
-              router.push('/quiz')
+      router.push('/quiz')
     }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50">
+    <div className="min-h-screen bg-gray-50 p-4">
       <div className="max-w-md mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-4">
-          <button
-            onClick={() => router.push('/quiz')}
-            className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
-          >
-            <ArrowLeft className="h-5 w-5" />
-            <span>Back</span>
-          </button>
-          <h1 className="text-xl font-bold text-gray-900">Choose Video</h1>
-          <div className="w-20"></div> {/* Spacer for centering */}
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-bold text-gray-800 mb-2">Choose Your Background</h1>
+          <p className="text-gray-600">
+            Pick a background video to help you focus while studying
+          </p>
         </div>
+
+        {/* Spacer for centering */}
+        <div className="h-8"></div>
 
         {/* Video Feed */}
         <div className="space-y-4 pb-4">
@@ -66,7 +62,7 @@ export default function VideosPage() {
               className={`
                 relative w-full max-w-sm mx-auto cursor-pointer transition-all
                 ${selectedVideo === video.label 
-                  ? 'ring-2 ring-accent' 
+                  ? 'ring-2 ring-[#5CA4F6]' 
                   : ''
                 }
               `}
@@ -78,10 +74,10 @@ export default function VideosPage() {
                 muted
                 loop
                 playsInline
-                className="w-full aspect-[9/16] rounded-lg bg-black object-cover"
+                className="w-full aspect-[9/16] rounded-lg bg-gray-200 object-cover"
               />
               {selectedVideo === video.label && (
-                <div className="absolute top-4 right-4 bg-accent text-white rounded-full p-2">
+                <div className="absolute top-4 right-4 bg-[#5CA4F6] text-white rounded-full p-2">
                   <Check className="h-5 w-5" />
                 </div>
               )}
@@ -97,8 +93,8 @@ export default function VideosPage() {
             className={`
               px-8 py-3 rounded-full font-semibold text-lg transition-all shadow-lg
               ${selectedVideo
-                ? 'bg-primary text-white hover:bg-primary/90'
-                : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                ? 'bg-[#5CA4F6] text-white hover:bg-[#5CA4F6]/90'
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
               }
             `}
           >
