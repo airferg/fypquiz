@@ -9,18 +9,17 @@ interface PWAInstallProps {
 
 export default function PWAInstall({ className = '' }: PWAInstallProps) {
   const [showInstructions, setShowInstructions] = useState(false)
-  const [mounted, setMounted] = useState(false)
+  const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
+    setIsClient(true)
   }, [])
 
   const closeInstructions = () => {
     setShowInstructions(false)
   }
 
-  // Don't render until mounted to prevent hydration mismatch
-  if (!mounted) {
+  if (!isClient) {
     return null
   }
 
