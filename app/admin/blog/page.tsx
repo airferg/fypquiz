@@ -23,7 +23,7 @@ function BlogAdminContent() {
   const { user, loading } = useAuth()
   const router = useRouter()
   const [posts, setPosts] = useState<BlogPost[]>([])
-  const [loading: postsLoading, setPostsLoading] = useState(true)
+  const [postsLoading, setPostsLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedStatus, setSelectedStatus] = useState<string>('all')
   const [sortBy, setSortBy] = useState<'date' | 'title' | 'views'>('date')
