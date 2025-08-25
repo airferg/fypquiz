@@ -69,7 +69,7 @@ export default function LandingVideo() {
       <div className="relative w-full aspect-[9/16] rounded-[15px] overflow-hidden shadow-2xl bg-gray-100">
         <video
           ref={videoRef}
-          src="/landingpagesr(1).mp4"
+          src="/landingpagesr (1).mp4"
           className="w-full h-full object-cover"
           loop
           muted
