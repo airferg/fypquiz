@@ -18,10 +18,17 @@ export default function LandingVideo() {
       
       // Add event listeners for debugging
       video.addEventListener('loadstart', () => console.log('Video loadstart'))
+      video.addEventListener('loadedmetadata', () => console.log('Video loadedmetadata'))
       video.addEventListener('loadeddata', () => console.log('Video loadeddata'))
       video.addEventListener('canplay', () => console.log('Video canplay'))
+      video.addEventListener('canplaythrough', () => console.log('Video canplaythrough'))
       video.addEventListener('playing', () => console.log('Video playing'))
-      video.addEventListener('error', (e) => console.error('Video error:', e))
+      video.addEventListener('error', (e) => {
+        console.error('Video error:', e)
+        console.error('Video error details:', video.error)
+        console.error('Video networkState:', video.networkState)
+        console.error('Video readyState:', video.readyState)
+      })
       
       // Force play
       const playVideo = async () => {
@@ -57,7 +64,7 @@ export default function LandingVideo() {
       <div className="relative w-full aspect-[9/16] rounded-[15px] overflow-hidden shadow-2xl bg-gray-100">
         <video
           ref={videoRef}
-          src="/landingpagesr.mp4"
+          src="/landingpagesr.mov"
           className="w-full h-full object-cover"
           loop
           muted
