@@ -9,6 +9,8 @@ export default function LandingVideo() {
     const video = videoRef.current
     if (video) {
       console.log('Video element found, setting properties...')
+      console.log('Video src will be:', video.src)
+      console.log('Video currentSrc:', video.currentSrc)
       
       // Set video properties
       video.muted = true
@@ -26,8 +28,11 @@ export default function LandingVideo() {
       video.addEventListener('error', (e) => {
         console.error('Video error:', e)
         console.error('Video error details:', video.error)
+        console.error('Video error code:', video.error?.code)
+        console.error('Video error message:', video.error?.message)
         console.error('Video networkState:', video.networkState)
         console.error('Video readyState:', video.readyState)
+        console.error('Video currentSrc:', video.currentSrc)
       })
       
       // Force play
@@ -64,7 +69,7 @@ export default function LandingVideo() {
       <div className="relative w-full aspect-[9/16] rounded-[15px] overflow-hidden shadow-2xl bg-gray-100">
         <video
           ref={videoRef}
-          src="/landingpagesr.mov"
+          src="/landingpagesr(1).mp4"
           className="w-full h-full object-cover"
           loop
           muted
